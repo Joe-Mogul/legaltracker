@@ -1,0 +1,5 @@
+System Components
+
+Backend Rest Server with mysql database
+Android Devices with GPS software
+Maintenance Server at site of bus depot
