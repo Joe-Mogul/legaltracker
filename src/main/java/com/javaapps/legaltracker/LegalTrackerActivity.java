@@ -35,7 +35,8 @@ public class LegalTrackerActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		TextView latLonTextView = (TextView) this.findViewById(R.id.latLonBox);
 		latLonTextView.setText("started service");
-		Intent i = new Intent("android.intent.action.MAIN");
+		Intent i = new Intent();
+		i.setAction("kickOffLogger");
 		this.sendBroadcast(i);
 	}
 
