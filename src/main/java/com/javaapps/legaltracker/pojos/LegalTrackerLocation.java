@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker;
+package com.javaapps.legaltracker.pojos;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +10,8 @@ public class LegalTrackerLocation implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private final Date systemDate;
+	
+	private final Date sampleDate;
 	
 	private final double latitude;
 	
@@ -28,6 +30,7 @@ public class LegalTrackerLocation implements Serializable{
 		this.speed=location.getSpeed();
 		this.bearing=location.getBearing();
 		this.altitude=location.getAltitude();
+		this.sampleDate=new Date(location.getTime());
 	}
 
 	public static long getSerialversionuid() {
@@ -58,13 +61,19 @@ public class LegalTrackerLocation implements Serializable{
 		return altitude;
 	}
 
+	
+	public Date getSampleDate() {
+		return sampleDate;
+	}
+
 	@Override
 	public String toString() {
-		return "LegalTrackerLocation [date=" + systemDate + ", latitude=" + latitude
+		return "LegalTrackerLocation [systemDate=" + systemDate
+				+ ", sampleDate=" + sampleDate + ", latitude=" + latitude
 				+ ", longitude=" + longitude + ", speed=" + speed
 				+ ", bearing=" + bearing + ", altitude=" + altitude + "]";
 	}
-	
+
 	
 
 }

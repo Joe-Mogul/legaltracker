@@ -31,9 +31,9 @@
         <receiver android:name="com.javaapps.legaltracker.receiver.LegalTrackerKickOffReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="kickOffLogger" />
             </intent-filter>
-        </receiver>
+          </receiver>
 -
  -
     </application>
