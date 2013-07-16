@@ -1,5 +1,11 @@
 System Components
 
-Backend Rest Server with mysql database
+Backend Rest Server with (mysql/mongodb?) database
 Android Devices with GPS software
-Maintenance Server at site of bus depot
+Maintenance Server at site of bus depot with Android Debug Bridge installed and remote desktop enabled.
+
+Data Flow
+Data collects GPS data at configurable intervals.  Data is cached on android device.  Android device polls for wireless connections.  
+When a wireless connection is obtained, android device uploads GPS data as a JSON payload post to the backend rest server.  Backend rest server receives JSON payload, processes the payload, and persists payload to database.  Android device also uploads all alerts via a JSON payload post.  Backend server processes alerts payload and persists alerts to database.  Android device downloads a configuration payload from the rest server.  Configuration settings are updated on the Android device.
+
+Rest Server periodically, queries database to assure all devices have uploaded their data.  A report is generated for all those devices that have not uploaded their data within the past 24 hours.  For those defective devices, maintenance person attempts to connect to device via ADB bridge on the maintenance server through remote desktop. 
