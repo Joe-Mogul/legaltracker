@@ -33,8 +33,12 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="kickOffLogger" />
             </intent-filter>
-          </receiver>
+        </receiver>
 -
+        <receiver android:name="com.javaapps.legaltracker.receiver.LocationDataUploader" >
+        </receiver>
+-
+
  -
     </application>
 

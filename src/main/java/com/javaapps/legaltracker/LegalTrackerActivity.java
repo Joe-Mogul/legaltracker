@@ -38,6 +38,7 @@ public class LegalTrackerActivity extends Activity {
 		Intent i = new Intent();
 		i.setAction("kickOffLogger");
 		this.sendBroadcast(i);
+		Log.i("legaltracker","activity kicked off");
 	}
 
 	@Override

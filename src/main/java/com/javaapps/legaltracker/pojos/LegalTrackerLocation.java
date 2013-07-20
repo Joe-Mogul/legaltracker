@@ -13,6 +13,8 @@ public class LegalTrackerLocation implements Serializable{
 	
 	private final Date sampleDate;
 	
+	private Date lastGoodUpdate;
+	
 	private final double latitude;
 	
 	private final double longitude;
@@ -65,15 +67,23 @@ public class LegalTrackerLocation implements Serializable{
 	public Date getSampleDate() {
 		return sampleDate;
 	}
+	
+	public Date getLastGoodUpdate() {
+		return lastGoodUpdate;
+	}
+
+	public void setLastGoodUpdate(Date lastGoodUpdate) {
+		this.lastGoodUpdate = lastGoodUpdate;
+	}
 
 	@Override
 	public String toString() {
 		return "LegalTrackerLocation [systemDate=" + systemDate
-				+ ", sampleDate=" + sampleDate + ", latitude=" + latitude
-				+ ", longitude=" + longitude + ", speed=" + speed
-				+ ", bearing=" + bearing + ", altitude=" + altitude + "]";
+				+ ", sampleDate=" + sampleDate + ", lastGoodUpdate="
+				+ lastGoodUpdate + ", latitude=" + latitude + ", longitude="
+				+ longitude + ", speed=" + speed + ", bearing=" + bearing
+				+ ", altitude=" + altitude + "]";
 	}
 
 	
-
 }
