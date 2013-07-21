@@ -1,5 +1,6 @@
 package com.javaapps.legaltracker.receiver;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 
 import android.content.Context;
@@ -69,13 +71,14 @@ public class LegalTrackerFile<T> {
 		return (retList);
 	}
 
-	public void readFromObjectFile() {
+	public void readFromObjectFile(UploadHandler uploadHandler) {
 		boolean isNotLocked = lock.tryLock();
 		// If it is locked then just return the list and try to save it another
 		// time
 		if (!isNotLocked) {
 			return;
 		}
+		List<LegalTrackerLocation> batchLocationDataList=new ArrayList<LegalTrackerLocation>();
 		Log.i("legaltrackerreader", "reading location data file");
 		ObjectInputStream objectInputStream = null;
 		try {
@@ -87,14 +90,13 @@ public class LegalTrackerFile<T> {
 			try {
 				while ((object = objectInputStream.readObject()) != null) {
 					LegalTrackerLocation legalTrackerLocation = (LegalTrackerLocation) object;
-					Log.i("legaltrackerreader",
-							legalTrackerLocation.getLatitude() + " "
-									+ legalTrackerLocation.getLongitude());
+					batchLocationDataList.add(legalTrackerLocation);
+					if (batchLocationDataList.size()>Config.getConfig().getUploadBatchSize() ){
+						uploadHandler.uploadData(batchLocationDataList);
+					}
 				}
-			} catch (Exception ex) {
-				Log.e("legaltrackerreader",
-						"unable to read location  data because "
-								+ ex.getMessage());
+			} catch (EOFException ex) {
+				uploadHandler.uploadData(batchLocationDataList);
 			}
 		} catch (Exception ex) {
 			Log.e("legaltrackerreader",
