@@ -35,6 +35,16 @@ public class LegalTrackerLocation implements Serializable{
 		this.sampleDate=new Date(location.getTime());
 	}
 
+	public LegalTrackerLocation(double latitude, double longitude, float speed, float bearing, float altitude, long sampleDateTime){
+		this.latitude=latitude;
+		this.longitude=longitude;
+		this.systemDate=new Date();
+		this.speed=speed;
+		this.bearing=bearing;
+		this.altitude=altitude;
+		this.sampleDate=new Date(sampleDateTime);
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -83,6 +93,10 @@ public class LegalTrackerLocation implements Serializable{
 				+ lastGoodUpdate + ", latitude=" + latitude + ", longitude="
 				+ longitude + ", speed=" + speed + ", bearing=" + bearing
 				+ ", altitude=" + altitude + "]";
+	}
+
+	public String getDisplayString() {
+		return latitude+","+longitude+","+speed+","+bearing;
 	}
 
 	

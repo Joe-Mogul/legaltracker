@@ -13,6 +13,7 @@
 		<platform.version> 4.1.1.4
 		</platform.version>
 		<android.plugin.version>3.5.3</android.plugin.version>
+		<scope>provided</scope>
 	</properties>
 
 	<dependencies>
@@ -20,7 +21,25 @@
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
 			<version>${platform.version}</version>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.pivotallabs</groupId>
+			<artifactId>robolectric</artifactId>
+			<version>1.2</version>
+			<scope>test</scope>
+			<classifier>jar-with-dependencies</classifier>
+		</dependency>
+		<dependency>
+			<groupId>easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>2.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -32,6 +51,9 @@
 					<artifactId>android-maven-plugin</artifactId>
 					<version>${android.plugin.version}</version>
 					<extensions>true</extensions>
+					<configuration>
+						<genDirectory>gen</genDirectory>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -44,7 +66,9 @@
 						<platform>17</platform>
 						<path>/home/hduser/android-sdks/sdk</path>
 					</sdk>
+					<undeployBeforeDeploy>true</undeployBeforeDeploy>
 				</configuration>
+				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>
