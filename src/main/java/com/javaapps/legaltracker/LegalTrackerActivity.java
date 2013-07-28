@@ -1,44 +1,29 @@
 package com.javaapps.legaltracker;
 
-import java.util.Date;
-
-import com.javaapps.legaltracker.receiver.LegalTrackerKickOffReceiver;
-
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.AsyncTask;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
 public class LegalTrackerActivity extends Activity {
 
-	/**
-	 * Called when the activity is first created.
-	 * 
-	 * @param savedInstanceState
-	 *            If the activity is being re-initialized after previously being
-	 *            shut down then this Bundle contains the data it most recently
-	 *            supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it
-	 *            is null.</b>
-	 */
+	private static LegalActivityUpdater receiver;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		TextView latLonTextView = (TextView) this.findViewById(R.id.latLonBox);
-		latLonTextView.setText("started service");
 		Intent i = new Intent();
 		i.setAction("kickOffLogger");
 		this.sendBroadcast(i);
-		Log.i("legaltracker","activity kicked off");
+		registerActivityReceiver();
+		updateUI();
+		Log.i("legaltracker", "activity kicked off");
 	}
 
 	@Override
@@ -48,5 +33,41 @@ public class LegalTrackerActivity extends Activity {
 		return true;
 	}
 
-	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(receiver);
+	}
+
+	private void registerActivityReceiver() {
+		receiver = new LegalActivityUpdater();
+		IntentFilter filter = new IntentFilter(
+				" com.javaapps.legaltracker.LegalActivityUpdater ");
+		try {
+			registerReceiver(receiver, filter);
+		} catch (Exception ex) {
+			Log.e("legal tracker error", "Unable to register receiver because "
+					+ ex.getMessage());
+		}
+	}
+
+	private void updateUI() {
+		Log.i("legaltrackermonitor", "Legal Tracker Activity has been resumed");
+		Monitor monitor = Monitor.getInstance();
+		TextView statusView = (TextView) findViewById(R.id.Status);
+		statusView.setText(monitor.getStatus());
+		TextView lastLocationView = (TextView) findViewById(R.id.Location);
+		lastLocationView.setText(monitor.getLastLocation());
+		TextView lastUploadView = (TextView) findViewById(R.id.Processed);
+		lastUploadView.setText(monitor.getLastUploadDateDisplay());
+	}
+
+	public class LegalActivityUpdater extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			updateUI();
+		}
+
+	}
 }

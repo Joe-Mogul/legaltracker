@@ -1,15 +1,24 @@
 package com.javaapps.legaltracker.receiver;
 
 public enum FileType {
-	Location("locations.obj"), Alert("alerts.obj");
-	private String path;
+	Location("locations","obj"), Alert("alerts","obj");
+	
+	private String prefix;
+	private String extension;
 
-	private FileType(String path) {
-		this.path = path;
+	private FileType(String prefix,String extension) {
+		this.prefix = prefix;
+		this.extension=extension;
 	}
 
-	public String getPath() {
-		return path;
+	public String getPrefix() {
+		return prefix;
 	}
+
+	public String getExtension() {
+		return extension;
+	}
+
+	
 	
 }

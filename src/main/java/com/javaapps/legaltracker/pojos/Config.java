@@ -6,17 +6,17 @@ public class Config {
 
 	private static Config config;
 
-	private int locationUploadPeriod = 6000; 
+	private int locationUploadPeriod = 60000; 
 	
-	private int locationUploadDelay = 6000; 
+	private int locationUploadDelay = 60000; 
 
-	private long minimumLoggingIntervals = 1500;
+	private long minimumLoggingIntervals = 15000;
 
-	private int locationListenerBufferSize = 10;
+	private int locationListenerBufferSize = 100;
 
 	private int uploadBatchSize=1000;
 	
-	private String locationDataEndpoint="http://lextech.com/legaltracker";
+	private String locationDataEndpoint="http://192.168.2.3:8080/demo/people/uploadLocationData";
 	
 	public String getLocationDataEndpoint() {
 		return locationDataEndpoint;

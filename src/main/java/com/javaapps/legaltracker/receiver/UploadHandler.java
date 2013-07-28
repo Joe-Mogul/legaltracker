@@ -6,7 +6,6 @@ import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 
 public interface UploadHandler {
 
-	public abstract boolean uploadData(
-			List<LegalTrackerLocation> locationDataList);
+	public abstract void uploadData(String filePrefix);
 
 }
