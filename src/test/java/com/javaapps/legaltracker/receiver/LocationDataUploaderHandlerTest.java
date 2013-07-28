@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 import com.javaapps.legaltracker.utils.MockHttpClientFactory;
+import com.javaapps.legaltracker.utils.MockHttpClientFactory;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
