@@ -11,30 +11,36 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import android.content.Context;
 import android.util.Log;
 
 public class LegalTrackerFile<T> {
 
+	public final static String ARCHIVE_STRING="_archive_";
+	
 	private final ReentrantLock lock = new ReentrantLock();
-
+   
 	private ObjectOutputStream objectOutputStream;
 
 	private File filesDir;
 	private String prefix;
 	private String extension;
 	private java.text.DateFormat dateFormat=new SimpleDateFormat("yyyyMMddHHmmss");
-	private UploadHandler uploadHandler;
-
-	public LegalTrackerFile(Context context, String prefix,String extension)
+	
+	public LegalTrackerFile(File filesDir, String prefix,String extension)
 			throws FileNotFoundException, IOException {
-		this.filesDir = context.getFilesDir();
-		uploadHandler=new LocationDataUploaderHandler(this.filesDir );
+		this.filesDir =filesDir;
 		this.prefix =prefix;
 		this.extension=extension;
 		openLocationDataFileForWrite();
 	}
 
+	public void deleteFiles(){
+		for (File file:filesDir.listFiles()){
+			if (file.getName().startsWith(prefix+ARCHIVE_STRING)){
+				file.delete();
+			}
+		}
+	}
 	public List<T> writeToObjectFile(List<T> objectList) throws IOException {
 		List<T> retList = new ArrayList<T>();
 		boolean isNotLocked = lock.tryLock();
@@ -69,7 +75,7 @@ public class LegalTrackerFile<T> {
 		return (retList);
 	}
 
-	public void readFromObjectFile() {
+	public void closeOutObjectFile() {
 		boolean isNotLocked = lock.tryLock();
 		// If it is locked then just return the list and try to save it another
 		// time
@@ -80,10 +86,8 @@ public class LegalTrackerFile<T> {
 		try {
 			objectOutputStream.flush();
 			objectOutputStream.close();
-			File file = new File(filesDir, prefix+extension);
-			String newPath=file.getPath()+"/"+prefix+"_archive_"+dateFormat.format(new Date())+"."+extension;
-			file.renameTo(new File(newPath));
-			uploadHandler.uploadData(prefix+"_archive_");
+			File file = new File(filesDir,getActiveFileName());
+			file.renameTo(new File(filesDir, getArchiveFileName()));
 		} catch (Exception ex) {
 			Log.e("legaltrackerreader",
 					"unable move data file because "
@@ -95,10 +99,18 @@ public class LegalTrackerFile<T> {
 		return;
 	}
 
+	private String getActiveFileName(){
+		return prefix+"."+extension;
+	}
+	
+	private String getArchiveFileName()
+	{
+		return prefix+ARCHIVE_STRING+dateFormat.format(new Date())+"."+extension;
+	}
 	
 	private void openLocationDataFileForWrite() {
 		try {
-			String fileName=prefix+"."+extension;
+			String fileName=getActiveFileName();
 			File file = new File(filesDir, fileName);
 			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
 					file));

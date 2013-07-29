@@ -1,0 +1,83 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="5dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Status"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/Status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/StartingService"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/locationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:text="@string/Location"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/None"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TextView
+        android:id="@+id/ProcessedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:text="@string/Processed"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/Processed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/NotYet"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+        <TextView
+        android:id="@+id/ArchivesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:text="@string/ArchiveFiles"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/Archives"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/None"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+      <TextView
+        android:id="@+id/LastStatusCodeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:text="@string/LastStatusCode"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/LastStatusCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/None"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <Button
+        android:id="@+id/RefreshMonitor"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/RefreshMonitor" />
+
+</LinearLayout>

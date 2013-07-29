@@ -28,17 +28,19 @@ import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 import com.javaapps.legaltracker.pojos.LocationDataUpload;
 
-public class LocationDataUploaderHandler implements UploadHandler {
+public class LocationDataUploaderHandler {
 
 
 	private HttpClientFactory httpClientFactory = new HttpClientFactoryImpl();
 
 	private File filesDir;
+	private String filePrefix;
  
 	Map<String,FileResultMap>fileResultMaps=new HashMap<String,FileResultMap>();
 	
-	public LocationDataUploaderHandler(File filesDir) {
+	public LocationDataUploaderHandler(File filesDir,String filePrefix) {
 		this.filesDir = filesDir;
+		this.filePrefix=filePrefix;
 	}
 
 	public void setHttpClientFactory(HttpClientFactory httpClientFactory) {
@@ -52,16 +54,20 @@ public class LocationDataUploaderHandler implements UploadHandler {
 	 * com.javaapps.legaltracker.receiver.UploadHandler#uploadData(java.util
 	 * .List)
 	 */
-	@Override
-	public void uploadData(String filePrefix) {
+	public void uploadData() {
 		if ( !cleanUpExistingFiles()){
 			Log.i("legalfiletracker","Unable to delete all existing buffer files");
 		}
+		StringBuilder sb=new StringBuilder();
 		for (File file : this.filesDir.listFiles()) {
+			String fileName=file.getName();
 			if (file.getName().startsWith(filePrefix)) {
+				Monitor.getInstance().setStatus("uploading "+fileName);
+				sb.append(fileName+"\n");
 				loadFile(file);
 			}
 		}
+		Monitor.getInstance().setArchiveFiles(sb.toString());
 	}
 
 	boolean cleanUpExistingFiles() {
@@ -172,8 +178,10 @@ public class LocationDataUploaderHandler implements UploadHandler {
 		try {
 			Monitor.getInstance().setLastUploadDate(new Date());
 			String jsonStr = locationDataUpload.toJsonString();
+			Monitor.getInstance().setStatus("Last upload status starting upload task");
 			DataUploadTask dataUploadTask = new DataUploadTask(fileResultMap,index, jsonStr);
 			Thread thread = new Thread(dataUploadTask);
+			
 			thread.start();
 		} catch (Exception e) {
 			Log.e("legaltracker",
@@ -235,12 +243,16 @@ public class LocationDataUploaderHandler implements UploadHandler {
 				HttpResponse response = httpclient.execute(httppost);
 				fileResultMap.resultMap.put(index, response
 						.getStatusLine().getStatusCode());
+				Monitor.getInstance().setLastUploadStatusCode(response
+						.getStatusLine().getStatusCode());
 			} catch (Exception e) {
+				Monitor.getInstance().setStatus("could not upload "+e.getMessage());
 				Log.e("legaltracker",
 						"cannot  upload data to server because because"
 								+ e.getMessage());
 			}
 		}
 	}
+
 
 }

@@ -1,6 +1,6 @@
 package com.javaapps.legaltracker.receiver;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -15,12 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.message.BasicHttpResponse;
-import org.easymock.IMocksControl;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +24,6 @@ import org.junit.runner.RunWith;
 
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
-import com.javaapps.legaltracker.utils.MockHttpClientFactory;
 import com.javaapps.legaltracker.utils.MockHttpClientFactory;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
@@ -76,24 +71,24 @@ public class LocationDataUploaderHandlerTest {
 	@Test
 	public void uploadDataResultMapSizeTest() throws ClientProtocolException, IOException {
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
-				testFileDir);
+				testFileDir,"unittest");
 		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{400},"URL not found"));
 		Config.getConfig().setUploadBatchSize(13);
-		locationDataUploaderHandler.uploadData("unittest");
+		locationDataUploaderHandler.uploadData();
 		Map<Integer,Integer>resultMap=locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()).getResultMap();
 		assertTrue("expecting 8 but was "+ resultMap.size(),resultMap.size() == 8);
 		Config.getConfig().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData("unittest");
+		locationDataUploaderHandler.uploadData();
 		assertTrue("expecting 10 but was "+ resultMap.size(),resultMap.size() == 10);
 	}
 	
 	@Test
 	public void uploadDataResultMapWithBadStatusTest() throws ClientProtocolException, IOException {
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
-				testFileDir);
+				testFileDir,"unittest");
 		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{400},"URL not found"));
 		Config.getConfig().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData("unittest");
+		locationDataUploaderHandler.uploadData();
 		Map<Integer,Integer>resultMap=locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()).getResultMap();
 	     assertTrue("resultMap is empty",resultMap.size()>0);
 		try {
@@ -119,10 +114,10 @@ public class LocationDataUploaderHandlerTest {
 	@Test
 	public void uploadDataResultMapWithGoodStatusLastTest() throws ClientProtocolException, IOException {
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
-				testFileDir);
+				testFileDir,"unittest");
 		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{201},"URL not found"));
 		Config.getConfig().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData("unittest");
+		locationDataUploaderHandler.uploadData();
 		Map<Integer,Integer>resultMap=locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()).getResultMap();
        assertTrue("resultMap is empty",resultMap.size()>0);
 		try {

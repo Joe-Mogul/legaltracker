@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="app_name">LegalTracker</string>
-    <string name="hello">Hello legaltracker!</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="StartingService">Starting Service</string>
+    <string name="Status">Status</string>
+    <string name="configuration">Configuration</string>
+    <string name="monitor">Monitor</string>
+    <string name="Location">Location</string>
+    <string name="None">None</string>
+    <string name="Processed">Processed</string>
+    <string name="NotYet">Not Yet</string>
+    <string name="ServerURL">Server URL</string>
+    <string name="SaveConfiguration">Save Configuration</string>
+    <string name="CleanArchiveFiles">Clean Archive Files</string>
+    <string name="ArchiveFiles">Archive Files</string>
+    <string name="RefreshMonitor">Refresh Monitor</string>
+    <string name="LastStatusCode">Last Status Code</string>
 </resources>

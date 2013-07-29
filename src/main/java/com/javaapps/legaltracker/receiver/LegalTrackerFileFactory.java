@@ -15,7 +15,7 @@ public class LegalTrackerFileFactory {
 		String filename=filePrefix+"."+extension;
 		LegalTrackerFile legalTrackerFile=fileMap.get(filename);
 		if (legalTrackerFile == null){
-			legalTrackerFile=new LegalTrackerFile(context,filePrefix,extension);
+			legalTrackerFile=new LegalTrackerFile(context.getFilesDir(),filePrefix,extension);
 			fileMap.put(filename, legalTrackerFile);
 		}
 		return legalTrackerFile;

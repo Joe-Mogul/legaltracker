@@ -10,6 +10,8 @@ public class Monitor {
 	private Date lastUploadDate;
 	private int numberOfPointsLoggedSinceUpload;
 	private int numberOfUploads;
+	private String archiveFiles;
+	private int lastUploadStatusCode=-1;
 
 	public String getStatus() {
 		return status;
@@ -17,6 +19,24 @@ public class Monitor {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getArchiveFiles() {
+		return archiveFiles;
+	}
+
+	public void setArchiveFiles(String archiveFiles) {
+		this.archiveFiles = archiveFiles;
+	}
+
+	
+	
+	public int getLastUploadStatusCode() {
+		return lastUploadStatusCode;
+	}
+
+	public void setLastUploadStatusCode(int lastUploadStatusCode) {
+		this.lastUploadStatusCode = lastUploadStatusCode;
 	}
 
 	public String getLastLocation() {

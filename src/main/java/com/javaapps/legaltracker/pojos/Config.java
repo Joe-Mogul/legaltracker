@@ -6,9 +6,9 @@ public class Config {
 
 	private static Config config;
 
-	private int locationUploadPeriod = 60000; 
+	private int locationUploadPeriod = 600000; 
 	
-	private int locationUploadDelay = 60000; 
+	private int locationUploadDelay = 600000; 
 
 	private long minimumLoggingIntervals = 15000;
 
@@ -16,7 +16,7 @@ public class Config {
 
 	private int uploadBatchSize=1000;
 	
-	private String locationDataEndpoint="http://192.168.2.3:8080/demo/people/uploadLocationData";
+	private String locationDataEndpoint="http://192.168.2.4:8080/demo/people/uploadLocationData";
 	
 	public String getLocationDataEndpoint() {
 		return locationDataEndpoint;
