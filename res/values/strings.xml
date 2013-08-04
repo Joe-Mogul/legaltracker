@@ -8,7 +8,7 @@
     <string name="monitor">Monitor</string>
     <string name="Location">Location</string>
     <string name="None">None</string>
-    <string name="Processed">Processed</string>
+    <string name="Processed">Processed Points</string>
     <string name="NotYet">Not Yet</string>
     <string name="ServerURL">Server URL</string>
     <string name="SaveConfiguration">Save Configuration</string>
@@ -16,4 +16,11 @@
     <string name="ArchiveFiles">Archive Files</string>
     <string name="RefreshMonitor">Refresh Monitor</string>
     <string name="LastStatusCode">Last Status Code</string>
+    <string name="ResetMonitor">Reset Monitor</string>
+    <string name="Uploaded">Uploaded Points</string>
+    <string name="Logged">Logged Points</string>
+    <string name="CurrentFileSize">Current File Size</string>
+    <string name="PointsInBuffer">Points in Buffer</string>
+    <string name="NotProcessed">Not Processed Points</string>
+    <string name="LastConnectionError">Last Connection Error</string>
 </resources>

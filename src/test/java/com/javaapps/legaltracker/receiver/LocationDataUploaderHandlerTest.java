@@ -75,7 +75,7 @@ public class LocationDataUploaderHandlerTest {
 		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{400},"URL not found"));
 		Config.getConfig().setUploadBatchSize(13);
 		locationDataUploaderHandler.uploadData();
-		Map<Integer,Integer>resultMap=locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()).getResultMap();
+		Map<Integer,Integer>resultMap=FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()).getResultMap();
 		assertTrue("expecting 8 but was "+ resultMap.size(),resultMap.size() == 8);
 		Config.getConfig().setUploadBatchSize(10);
 		locationDataUploaderHandler.uploadData();
@@ -89,7 +89,7 @@ public class LocationDataUploaderHandlerTest {
 		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{400},"URL not found"));
 		Config.getConfig().setUploadBatchSize(10);
 		locationDataUploaderHandler.uploadData();
-		Map<Integer,Integer>resultMap=locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()).getResultMap();
+		Map<Integer,Integer>resultMap=FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()).getResultMap();
 	     assertTrue("resultMap is empty",resultMap.size()>0);
 		try {
 			Thread.sleep(500);
@@ -102,7 +102,7 @@ public class LocationDataUploaderHandlerTest {
 					entry.getValue() == 400);
 		}
 		locationDataUploaderHandler.cleanUpExistingFiles();
-		assertNotNull("Could not find fileResultMap",locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()));
+		assertNotNull("Could not find fileResultMap",FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()));
 		File file=new File(testFile.getAbsolutePath());
 		assertTrue("file should not have been deleted because all status codes are bad",file.exists());
 
@@ -118,7 +118,7 @@ public class LocationDataUploaderHandlerTest {
 		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{201},"URL not found"));
 		Config.getConfig().setUploadBatchSize(10);
 		locationDataUploaderHandler.uploadData();
-		Map<Integer,Integer>resultMap=locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()).getResultMap();
+		Map<Integer,Integer>resultMap=FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()).getResultMap();
        assertTrue("resultMap is empty",resultMap.size()>0);
 		try {
 			Thread.sleep(500);
@@ -131,7 +131,7 @@ public class LocationDataUploaderHandlerTest {
 					entry.getValue() == 201);
 		}
 		locationDataUploaderHandler.cleanUpExistingFiles();
-		assertNull("Could not find fileResultMap",locationDataUploaderHandler.fileResultMaps.get(testFile.getAbsolutePath()));
+		assertNull("Could not find fileResultMap",FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()));
 		File file=new File(testFile.getAbsolutePath());
 		assertFalse("file should have been deleted because all status codes are good",file.exists());
 	}

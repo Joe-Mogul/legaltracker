@@ -29,7 +29,7 @@ public class LegalTrackerFileTest {
 			if (! filesDir.exists()){
 				filesDir.mkdir();
 			}
-			legalTrackerFile = new LegalTrackerFile(filesDir, "unittest", "obj");
+			legalTrackerFile = new LegalTrackerFile( "unittest", "obj");
 		} catch (Exception ex) {
 			fail("Unable to setup LegalTrackerFileTest because "
 					+ ex.getMessage());

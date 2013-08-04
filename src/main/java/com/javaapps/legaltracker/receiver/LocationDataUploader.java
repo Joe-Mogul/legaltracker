@@ -14,7 +14,7 @@ public class LocationDataUploader extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.i("legaluploader", "beginning upload");
-		Monitor.getInstance().setStatus("beginning upload");
+		Monitor.getInstance().setStatus("checking for wifi connection");
 		try {
 			WifiManager wifiManager = (WifiManager) context
 					.getSystemService(Context.WIFI_SERVICE);
@@ -24,6 +24,7 @@ public class LocationDataUploader extends BroadcastReceiver {
 				Monitor.getInstance().setStatus("wifi not enabled");
 				return;
 			}
+			Monitor.getInstance().setStatus("pinging wifi connection");
 			if (!wifiManager.pingSupplicant()) {
 				Log.i("legaltrackeruploader",
 						"cannot upload location data because could not could to wifi");
@@ -32,12 +33,16 @@ public class LocationDataUploader extends BroadcastReceiver {
 				return;
 
 			}
-			Monitor.getInstance().setStatus("beginning upload of file");
 			LegalTrackerFile legalTrackerFile = LegalTrackerFileFactory
-					.getLegalTrackerFile(context,
+					.getLegalTrackerFile(
 							FileType.Location.getPrefix(),
 							FileType.Location.getExtension());
+			if (legalTrackerFile.isEmpty()){
+				Monitor.getInstance().setStatus("got wifi connection but trackerfile is empty");
+				return;
+			}
 			legalTrackerFile.closeOutObjectFile();
+			Monitor.getInstance().setStatus("beginning upload of file");
 			LocationDataUploaderHandler locationDataUploaderHandler=new LocationDataUploaderHandler(context.getFilesDir(),FileType.Location.getPrefix()+"_archive_");
 			locationDataUploaderHandler.uploadData();
 			Log.i("legaluploader", "uploaded file");

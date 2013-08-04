@@ -19,6 +19,7 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 	@Override
 	public synchronized void onReceive(Context context, Intent i) {
 		Log.i("legaltracker init " , "LegalTrackerKickOffReceiver received intent "+i.getAction());
+		Config.getConfig().setFilesDir(context.getFilesDir());
 		locationListener=new LegalTrackerLocationListener(context);
 		scheduleLocationPolling(context);
 		scheduleFileUploads(context);

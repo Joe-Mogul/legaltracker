@@ -3,7 +3,6 @@ package com.javaapps.legaltracker;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.security.auth.login.Configuration;
 
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.receiver.FileType;
@@ -68,7 +67,6 @@ public class ConfigurationActivity extends Activity {
 			LegalTrackerFile legalTrackerFile;
 			try {
 				legalTrackerFile = LegalTrackerFileFactory.getLegalTrackerFile(
-						ConfigurationActivity.this.getBaseContext(),
 						FileType.Location.getPrefix(),
 						FileType.Location.getExtension());
 				legalTrackerFile.deleteFiles();

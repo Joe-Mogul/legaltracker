@@ -1,22 +1,25 @@
 package com.javaapps.legaltracker.pojos;
 
-import java.net.URI;
+import java.io.File;
+
+
 
 public class Config {
 
 	private static Config config;
 
+	private File filesDir;
+	
 	private int locationUploadPeriod = 600000; 
 	
 	private int locationUploadDelay = 600000; 
 
 	private long minimumLoggingIntervals = 15000;
 
-	private int locationListenerBufferSize = 100;
 
 	private int uploadBatchSize=1000;
 	
-	private String locationDataEndpoint="http://192.168.2.4:8080/demo/people/uploadLocationData";
+	private String locationDataEndpoint="http://192.168.2.6:8080/demo/people/uploadLocationData";
 	
 	public String getLocationDataEndpoint() {
 		return locationDataEndpoint;
@@ -31,12 +34,11 @@ public class Config {
 
 
 	public int getLocationListenerBufferSize() {
-		return locationListenerBufferSize;
+		//return (600000/(int)this.minimumLoggingIntervals);
+		return 40;
+		//we should store 10 minutes of logged points in the buffer
 	}
 
-	public void setLocationListenerBufferSize(int locationListenerBufferSize) {
-		this.locationListenerBufferSize = locationListenerBufferSize;
-	}
 
 	
 	public long getMinimumLoggingIntervals() {
@@ -73,6 +75,20 @@ public class Config {
 	public void setUploadBatchSize(int uploadBatchSize) {
 		this.uploadBatchSize = uploadBatchSize;
 	}
+
+	
+	
+	public File getFilesDir() {
+		return filesDir;
+	}
+
+
+
+	public void setFilesDir(File filesDir) {
+		this.filesDir = filesDir;
+	}
+
+
 
 	public synchronized static Config getConfig() {
 		if (config == null) {

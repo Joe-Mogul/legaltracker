@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.javaapps.legaltracker.Monitor;
+import com.javaapps.legaltracker.pojos.Config;
+
+import android.content.ContextWrapper;
 import android.util.Log;
 
 public class LegalTrackerFile<T> {
@@ -26,9 +30,9 @@ public class LegalTrackerFile<T> {
 	private String extension;
 	private java.text.DateFormat dateFormat=new SimpleDateFormat("yyyyMMddHHmmss");
 	
-	public LegalTrackerFile(File filesDir, String prefix,String extension)
+	public LegalTrackerFile(String prefix,String extension)
 			throws FileNotFoundException, IOException {
-		this.filesDir =filesDir;
+		this.filesDir =Config.getConfig().getFilesDir();
 		this.prefix =prefix;
 		this.extension=extension;
 		openLocationDataFileForWrite();
@@ -70,6 +74,8 @@ public class LegalTrackerFile<T> {
 			if (objectOutputStream != null) {
 				objectOutputStream.flush();
 			}
+			File file = new File(filesDir,getActiveFileName());
+			Monitor.getInstance().setCurrentFileSize(file.length());
 			lock.unlock();
 		}
 		return (retList);
@@ -88,6 +94,7 @@ public class LegalTrackerFile<T> {
 			objectOutputStream.close();
 			File file = new File(filesDir,getActiveFileName());
 			file.renameTo(new File(filesDir, getArchiveFileName()));
+			Monitor.getInstance().setCurrentFileSize(0);
 		} catch (Exception ex) {
 			Log.e("legaltrackerreader",
 					"unable move data file because "
@@ -119,6 +126,13 @@ public class LegalTrackerFile<T> {
 			Log.e("legaltracker", "unable to open location data file because "
 					+ ex.getMessage());
 		}
+	}
+
+	public boolean isEmpty() {
+		String fileName=getActiveFileName();
+		File file = new File(filesDir, fileName);
+		//object files are not 0 length when opened
+		return (file.length()<5);
 	}
 
 	
