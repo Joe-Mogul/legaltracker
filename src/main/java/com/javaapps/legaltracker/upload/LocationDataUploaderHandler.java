@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.upload;
 
 import java.io.EOFException;
 import java.io.File;
@@ -23,10 +23,10 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.util.Log;
 
-import com.javaapps.legaltracker.Monitor;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 import com.javaapps.legaltracker.pojos.LocationDataUpload;
+import com.javaapps.legaltracker.pojos.Monitor;
 
 public class LocationDataUploaderHandler {
 
@@ -61,7 +61,6 @@ public class LocationDataUploaderHandler {
 			String fileName = file.getName();
 			if (file.getName().startsWith(filePrefix)) {
 				sb.append(fileName + " " + file.length() + "\n");
-				Monitor.getInstance().setStatus("uploading " + fileName);
 				loadFile(file);
 			}
 		}
@@ -102,7 +101,7 @@ public class LocationDataUploaderHandler {
 			objectInputStream = new ObjectInputStream(new FileInputStream(file));
 			int bufferCounter = 0;
 			int objectCounter = 0;
-			int batchSize = Config.getConfig().getUploadBatchSize();
+			int batchSize = Config.getInstance().getUploadBatchSize();
 			try {
 				while ((objectInputStream.readObject()) != null) {
 					objectCounter++;
@@ -138,11 +137,11 @@ public class LocationDataUploaderHandler {
 				while ((object = objectInputStream.readObject()) != null) {
 					LegalTrackerLocation legalTrackerLocation = (LegalTrackerLocation) object;
 					batchLocationDataList.add(legalTrackerLocation);
-					if (batchLocationDataList.size() > Config.getConfig()
+					if (batchLocationDataList.size() > Config.getInstance()
 							.getUploadBatchSize()) {
 						uploadBatch(fileResultMap, index, batchLocationDataList);
 						index++;
-						batchLocationDataList.clear();
+						batchLocationDataList = new ArrayList<LegalTrackerLocation>();
 					}
 				}
 			} catch (EOFException ex) {
@@ -185,7 +184,6 @@ public class LocationDataUploaderHandler {
 		try {
 			Monitor.getInstance().setLastUploadDate(new Date());
 			String jsonStr = locationDataUpload.toJsonString();
-			Monitor.getInstance().setStatus("Starting upload task");
 			DataUploadTask dataUploadTask = new DataUploadTask(
 					locationDataList.size(), fileResultMap, index, jsonStr);
 			Thread thread = new Thread(dataUploadTask);
@@ -195,7 +193,6 @@ public class LocationDataUploaderHandler {
 			Log.e("legaltracker",
 					"cannot convert upload data to server because because"
 							+ e.getMessage());
-			Monitor.getInstance().setStatus("Cannot upload data to server");
 		}
 		return retValue;
 	}
@@ -216,32 +213,38 @@ public class LocationDataUploaderHandler {
 
 		@Override
 		public void run() {
-			try {
-				HttpClient httpclient = httpClientFactory.createHttpClient();
-				HttpPost httppost = new HttpPost(Config.getConfig()
-						.getLocationDataEndpoint());
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
-						2);
-				nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
-				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				HttpResponse response = httpclient.execute(httppost);
-				int statusCode = response.getStatusLine().getStatusCode();
-				fileResultMap.getResultMap().put(index, statusCode);
-				if (statusCode / 100 == 2) {
-					Monitor.getInstance().incrementTotalPointsProcessed(
-							batchSize);
-				} else {
-					Monitor.getInstance().incrementTotalPointsNotProcessed(
-							batchSize);
+			HttpClient httpClient = httpClientFactory.getHttpClient();
+			if (httpClient != null) {
+				try {
+					HttpPost httppost = new HttpPost(Config.getInstance()
+
+					.getLocationDataEndpoint());
+					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+							2);
+					nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					HttpResponse response = httpClient.execute(httppost);
+					int statusCode = response.getStatusLine().getStatusCode();
+					fileResultMap.getResultMap().put(index, statusCode);
+					if (statusCode / 100 == 2) {
+						Monitor.getInstance().incrementTotalPointsProcessed(
+								batchSize);
+					} else {
+						Monitor.getInstance().incrementTotalPointsNotProcessed(
+								batchSize);
+					}
+					Monitor.getInstance().setLastUploadStatusCode(statusCode);
+				} catch (Exception e) {
+					Monitor.getInstance().setLastUploadStatusCode(-99);
+					Monitor.getInstance()
+							.setLastConnectionError(e.getMessage());
+					Log.e("legaltracker",
+							"cannot  upload data to server because because"
+									+ e.getMessage());
 				}
-				Monitor.getInstance().setLastUploadStatusCode(
-						response.getStatusLine().getStatusCode());
-			} catch (Exception e) {
-				Monitor.getInstance().setLastUploadStatusCode(-99);
-				Monitor.getInstance().setLastConnectionError(e.getMessage());
-				Log.e("legaltracker",
-						"cannot  upload data to server because because"
-								+ e.getMessage());
+			} else {
+				Log.i("legaltracker",
+						"Could not get http client, in use by other process");
 			}
 		}
 	}

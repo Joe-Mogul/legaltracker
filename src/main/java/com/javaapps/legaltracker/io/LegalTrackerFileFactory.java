@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;

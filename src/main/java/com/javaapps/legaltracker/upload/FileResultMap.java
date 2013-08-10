@@ -1,10 +1,10 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.upload;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.javaapps.legaltracker.Monitor;
+import com.javaapps.legaltracker.pojos.Monitor;
 
 public class FileResultMap {
 	private String fileName;

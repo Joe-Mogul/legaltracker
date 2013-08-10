@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.upload;
 
 import java.util.HashMap;
 import java.util.Map;

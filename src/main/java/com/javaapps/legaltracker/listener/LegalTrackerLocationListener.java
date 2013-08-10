@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.listener;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +14,10 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.javaapps.legaltracker.Monitor;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
+import com.javaapps.legaltracker.pojos.Monitor;
+import com.javaapps.legaltracker.receiver.LocationBuffer;
 
 public class LegalTrackerLocationListener implements LocationListener {
 
@@ -32,7 +33,8 @@ public class LegalTrackerLocationListener implements LocationListener {
 		if (lastDate == null) {
 			lastDate = System.currentTimeMillis();
 		} else if ((System.currentTimeMillis() - lastDate) >= Config
-				.getConfig().getMinimumLoggingIntervals()) {
+				.getInstance().getMinimumLoggingIntervals()) {
+			Monitor.getInstance().setGpsStatus("GPS available");
 			lastDate = System.currentTimeMillis();
 			LocationBuffer.getInstance(filesDir).logLocation(location);
 		}

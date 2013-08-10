@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.javaapps.legaltracker.Monitor;
 import com.javaapps.legaltracker.pojos.Config;
+import com.javaapps.legaltracker.pojos.Monitor;
 
 import android.content.ContextWrapper;
 import android.util.Log;
@@ -32,7 +32,7 @@ public class LegalTrackerFile<T> {
 	
 	public LegalTrackerFile(String prefix,String extension)
 			throws FileNotFoundException, IOException {
-		this.filesDir =Config.getConfig().getFilesDir();
+		this.filesDir =Config.getInstance().getFilesDir();
 		this.prefix =prefix;
 		this.extension=extension;
 		openLocationDataFileForWrite();
@@ -93,7 +93,8 @@ public class LegalTrackerFile<T> {
 			objectOutputStream.flush();
 			objectOutputStream.close();
 			File file = new File(filesDir,getActiveFileName());
-			file.renameTo(new File(filesDir, getArchiveFileName()));
+			File newFile=new File(filesDir, getArchiveFileName());
+			file.renameTo(newFile);
 			Monitor.getInstance().setCurrentFileSize(0);
 		} catch (Exception ex) {
 			Log.e("legaltrackerreader",
@@ -123,8 +124,10 @@ public class LegalTrackerFile<T> {
 					file));
 			Log.i("legaltracker", fileName + " opened");
 		} catch (Exception ex) {
-			Log.e("legaltracker", "unable to open location data file because "
-					+ ex.getMessage());
+			String errorStr="unable to open location data file because "
+					+ ex.getMessage();
+			Monitor.getInstance().setStatus(errorStr);
+			Log.e("legaltracker",errorStr );
 		}
 	}
 

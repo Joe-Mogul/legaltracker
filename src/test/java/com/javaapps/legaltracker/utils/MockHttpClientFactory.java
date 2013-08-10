@@ -15,7 +15,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpRequest;
 
-import com.javaapps.legaltracker.receiver.HttpClientFactory;
+import com.javaapps.legaltracker.upload.HttpClientFactory;
 
 public class MockHttpClientFactory implements HttpClientFactory{
 	private int counter=0;
@@ -35,7 +35,7 @@ public class MockHttpClientFactory implements HttpClientFactory{
 	}
 	
 	@Override
-	public HttpClient createHttpClient() {
+	public HttpClient getHttpClient() {
 		return new HttpClient(){
 
 			@Override

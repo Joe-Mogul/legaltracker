@@ -14,9 +14,12 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.javaapps.legaltracker.Monitor;
+import com.javaapps.legaltracker.io.FileType;
+import com.javaapps.legaltracker.io.LegalTrackerFile;
+import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
+import com.javaapps.legaltracker.pojos.Monitor;
 
 public class LocationBuffer {
 
@@ -63,7 +66,7 @@ public class LocationBuffer {
 			monitor.setLastLocation(legalTrackerLocation.getDisplayString());
 			monitor.incrementTotalPointsLogged(1);
 			monitor.setPointsInBuffer(locationBufferList.size());
-			if (locationBufferList.size() > Config.getConfig()
+			if (locationBufferList.size() > Config.getInstance()
 					.getLocationListenerBufferSize()) {
 				try {
 					Log.i("legaltracker", "starting to save save to file");
@@ -91,18 +94,18 @@ public class LocationBuffer {
 		if (status == LocationProvider.AVAILABLE) {
 			Log.i("LegalTrackerLocationListener", provider
 					+ " service is now available");
-			Monitor.getInstance().setStatus("GPS available");
+			Monitor.getInstance().setGpsStatus("GPS available");
 			gpsStatusOn = true;
 		} else if (status == LocationProvider.OUT_OF_SERVICE) {
 			Log.i("LegalTrackerLocationListener", provider
 					+ " service is now available");
 			gpsStatusOn = false;
-			Monitor.getInstance().setStatus("GPS out of service");
+			Monitor.getInstance().setGpsStatus("GPS out of service");
 		} else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
 			Log.i("LegalTrackerLocationListener", provider
 					+ " service is temporarily unavailable");
 			gpsStatusOn = false;
-			Monitor.getInstance().setStatus("GPS temporarily unavailable");
+			Monitor.getInstance().setGpsStatus("GPS temporarily unavailable");
 		}
 	}
 

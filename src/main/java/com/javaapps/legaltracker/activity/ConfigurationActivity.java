@@ -1,13 +1,17 @@
-package com.javaapps.legaltracker;
+package com.javaapps.legaltracker.activity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
+import com.javaapps.legaltracker.R;
+import com.javaapps.legaltracker.R.id;
+import com.javaapps.legaltracker.R.layout;
+import com.javaapps.legaltracker.R.menu;
+import com.javaapps.legaltracker.io.FileType;
+import com.javaapps.legaltracker.io.LegalTrackerFile;
+import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
-import com.javaapps.legaltracker.receiver.FileType;
-import com.javaapps.legaltracker.receiver.LegalTrackerFile;
-import com.javaapps.legaltracker.receiver.LegalTrackerFileFactory;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -40,7 +44,7 @@ public class ConfigurationActivity extends Activity {
 		getMenuInflater().inflate(com.javaapps.legaltracker.R.menu.main, menu);
 		EditText serverURLEntry = (EditText) this
 				.findViewById(R.id.serverURLEntry);
-		serverURLEntry.setText(Config.getConfig().getLocationDataEndpoint());
+		serverURLEntry.setText(Config.getInstance().getLocationDataEndpoint());
 
 		return true;
 	}
@@ -81,10 +85,19 @@ public class ConfigurationActivity extends Activity {
 
 		@Override
 		public void onClick(View arg0) {
+			try
+			{
 			EditText serverURLEntry = (EditText) ConfigurationActivity.this
 					.findViewById(R.id.serverURLEntry);
-			Config.getConfig().setLocationDataEndpoint(
+			Config.getInstance().setLocationDataEndpoint(
 					serverURLEntry.getText().toString());
+			EditText testStatusCodeEntry = (EditText) ConfigurationActivity.this
+					.findViewById(R.id.TestStatusCode);
+			Config.getInstance().setTestStatusCode(
+					Integer.parseInt(testStatusCodeEntry.getText().toString()));
+			}catch(Exception ex){
+				//just to prevent a int parse exception
+			}
 		}
 
 	}

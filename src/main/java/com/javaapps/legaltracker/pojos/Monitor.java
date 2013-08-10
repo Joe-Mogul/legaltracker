@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker;
+package com.javaapps.legaltracker.pojos;
 
 import java.util.Date;
 
@@ -6,6 +6,8 @@ public class Monitor {
 
 	private static Monitor monitor;
 	private String status="Started Legal Tracker";
+	private String gpsStatus="Not Available";
+	private String wifiStatus="Not Available";
 	private String lastConnectionError;
 	private String lastLocation="No location yet";
 	private Date lastUploadDate;
@@ -152,6 +154,14 @@ public class Monitor {
 
 	
 	
+	public String getGpsStatus() {
+		return gpsStatus;
+	}
+
+	public void setGpsStatus(String gpsStatus) {
+		this.gpsStatus = gpsStatus;
+	}
+
 	public String getLastConnectionError() {
 		return lastConnectionError;
 	}
@@ -160,11 +170,25 @@ public class Monitor {
 		this.lastConnectionError = lastConnectionError;
 	}
 
+	
+	
+	public String getWifiStatus() {
+		return wifiStatus;
+	}
+
+	public void setWifiStatus(String wifiStatus) {
+		this.wifiStatus = wifiStatus;
+	}
+
+	
+	
 	public void reset()
 	{
 	 status="Monitor reset";
 	lastLocation="No location yet";
 	lastConnectionError="";
+	gpsStatus="Not Available";
+	wifiStatus="Not Available";
 	lastUploadDate=null;
 	numberOfPointsLoggedSinceUpload=0;
 	numberOfUploads=0;

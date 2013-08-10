@@ -1,4 +1,4 @@
-package com.javaapps.legaltracker.receiver;
+package com.javaapps.legaltracker.io;
 
 import java.io.EOFException;
 import java.io.File;
@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.javaapps.legaltracker.io.LegalTrackerFile;
+import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
@@ -25,10 +27,12 @@ public class LegalTrackerFileTest {
 	@Before
 	public void setup() {
 		try {
-			filesDir = new File("./unittestdir");
+			 String dirName="./unittestdir";
+			filesDir = new File(dirName);
 			if (! filesDir.exists()){
-				filesDir.mkdir();
+				assertTrue(filesDir.mkdir());
 			}
+			Config.getInstance().setFilesDir(filesDir);
 			legalTrackerFile = new LegalTrackerFile( "unittest", "obj");
 		} catch (Exception ex) {
 			fail("Unable to setup LegalTrackerFileTest because "
@@ -50,7 +54,6 @@ public class LegalTrackerFileTest {
 			assertTrue(file.exists());
 			assertTrue(file.length() > 0);
 			legalTrackerFile.closeOutObjectFile();
-			boolean foundArchiveFile = false;
 			File archiveFile = null;
 			for (File tmpFile : filesDir.listFiles()) {
 				if (tmpFile.getName().startsWith("unittest_archive_")) {

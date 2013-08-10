@@ -1,4 +1,10 @@
-package com.javaapps.legaltracker;
+package com.javaapps.legaltracker.activity;
+
+import com.javaapps.legaltracker.R;
+import com.javaapps.legaltracker.R.id;
+import com.javaapps.legaltracker.R.layout;
+import com.javaapps.legaltracker.R.menu;
+import com.javaapps.legaltracker.pojos.Monitor;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -66,9 +72,13 @@ public class LegalTrackerActivity extends Activity {
 
 	private void updateUI() {
 		Log.i("legaltrackermonitor", "Legal Tracker Activity has been resumed");
-		com.javaapps.legaltracker.Monitor monitor = Monitor.getInstance();
+		com.javaapps.legaltracker.pojos.Monitor monitor = Monitor.getInstance();
 		TextView statusView = (TextView) findViewById(R.id.Status);
 		statusView.setText(monitor.getStatus());
+		TextView wifiStatusView = (TextView) findViewById(R.id.WifiStatus);
+		wifiStatusView.setText(monitor.getWifiStatus());
+		TextView gpsStatusView = (TextView) findViewById(R.id.GpsStatus);
+		gpsStatusView.setText(monitor.getGpsStatus());
 		TextView lastConnectionErrorView = (TextView) findViewById(R.id.LastConnectionError);
 		lastConnectionErrorView.setText(monitor.getLastConnectionError());
 		TextView lastLocationView = (TextView) findViewById(R.id.Location);
