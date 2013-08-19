@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -34,31 +35,47 @@ public class LocationDataUploaderHandlerTest {
 
 	private List<LegalTrackerLocation> locationDataList = new ArrayList<LegalTrackerLocation>();
 	private static File testFileDir = new File("unitTestDir");
-	private static File testFile;
-    private ProtocolVersion protocolVersion=new ProtocolVersion("HTTP",1,2);
-	
+	private ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 2);
+
 	@BeforeClass
 	public static void setupBeforeClass() {
 		try {
 			if (!testFileDir.exists()) {
 				testFileDir.mkdir();
 			}
-			testFile=new File(testFileDir.getPath()+ "/unittest.obj");
-			ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(testFile));
-			for (int ii = 0; ii < 100; ii++) {
-				LegalTrackerLocation location = new LegalTrackerLocation(40.0,
-						-80.0, 10.f, 20.0f, 10.0f, System.currentTimeMillis());
-				oos.writeObject(location);
-			}
-			oos.flush();
-			oos.close();
-			Config.getInstance()
-					.setLocationDataEndpoint("http://boguswebsite.go");
+
+			Config.getInstance().setLocationDataEndpoint(
+					"http://boguswebsite.go");
 		} catch (Exception ex) {
 			fail("LocationDataUploaderHandlerTest setup failed because "
 					+ ex.getMessage());
 		}
+	}
+	
+	@Before
+	public void setupBeforeTest()
+	{
+		for (File file:testFileDir.listFiles())
+		{
+			file.delete();
+		}
+		FileResultMapsWrapper.getInstance().getFileResultMaps().clear();
+	}
+
+	private void createObjectFile(FileResult fileResult)
+			throws FileNotFoundException, IOException {
+		if (fileResult.file.exists()) {
+			fileResult.file.delete();
+		}
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
+				fileResult.file));
+		for (int ii = 0; ii < 100; ii++) {
+			LegalTrackerLocation location = new LegalTrackerLocation(40.0,
+					-80.0, 10.f, 20.0f, 10.0f, System.currentTimeMillis());
+			oos.writeObject(location);
+		}
+		oos.flush();
+		oos.close();
 	}
 
 	@Before
@@ -69,73 +86,123 @@ public class LocationDataUploaderHandlerTest {
 		}
 	}
 
-
-	@Test
-	public void uploadDataResultMapSizeTest() throws ClientProtocolException, IOException {
-		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
-				testFileDir,"unittest");
-		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{400},"URL not found"));
-		Config.getInstance().setUploadBatchSize(13);
-		locationDataUploaderHandler.uploadData();
-		Map<Integer,Integer>resultMap=FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()).getResultMap();
-		assertTrue("expecting 8 but was "+ resultMap.size(),resultMap.size() == 8);
-		Config.getInstance().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData();
-		assertTrue("expecting 10 but was "+ resultMap.size(),resultMap.size() == 10);
-	}
-	
-	@Test
-	public void uploadDataResultMapWithBadStatusTest() throws ClientProtocolException, IOException {
-		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
-				testFileDir,"unittest");
-		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{400},"URL not found"));
-		Config.getInstance().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData();
-		Map<Integer,Integer>resultMap=FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()).getResultMap();
-	     assertTrue("resultMap is empty",resultMap.size()>0);
+	private void testResults(FileResult fileResult) {
+		Map<Integer, Integer> resultMap = FileResultMapsWrapper.getInstance()
+				.getFileResultMaps().get(fileResult.file.getAbsolutePath())
+				.getResultMap();
+		assertTrue("resultMap is empty", resultMap.size() > 0);
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 		}
 		System.out.println(resultMap);
-		for (Entry<Integer, Integer> entry : resultMap
-				.entrySet()) {
-			assertTrue("expecting 400 status code but was " + entry.getValue(),
-					entry.getValue() == 400);
+		for (Entry<Integer, Integer> entry : resultMap.entrySet()) {
+			assertTrue("expecting " + fileResult.result
+					+ " status code but was " + entry.getValue(),
+					entry.getValue() == fileResult.result);
 		}
-		locationDataUploaderHandler.cleanUpExistingFiles();
-		assertNotNull("Could not find fileResultMap",FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()));
-		File file=new File(testFile.getAbsolutePath());
-		assertTrue("file should not have been deleted because all status codes are bad",file.exists());
+		if ( fileResult.fileShouldBeDeleted){
+			assertFalse(fileResult.file.exists());
+		}
+	}
+
+	@Test
+	public void uploadDataResultMapSizeTest() throws ClientProtocolException,
+			IOException {
+		FileResult fileResult = new FileResult("unittest", -1,false);
+		createObjectFile(fileResult);
+		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+				testFileDir, "unittest");
+		locationDataUploaderHandler
+				.setHttpClientFactory(new MockHttpClientFactory(
+						protocolVersion, new int[] { 400 }, "URL not found"));
+		Config.getInstance().setUploadBatchSize(13);
+		locationDataUploaderHandler.uploadData();
+		Map<Integer, Integer> resultMap = FileResultMapsWrapper.getInstance()
+				.getFileResultMaps().get(fileResult.file.getAbsolutePath())
+				.getResultMap();
+		assertTrue("expecting 8 but was " + resultMap.size(),
+				resultMap.size() == 8);
+		Config.getInstance().setUploadBatchSize(10);
+		locationDataUploaderHandler.uploadData();
+		assertTrue("expecting 10 but was " + resultMap.size(),
+				resultMap.size() == 10);
+	}
+
+	@Test
+	public void uploadDataResultMapWithBadStatusTest()
+			throws ClientProtocolException, IOException {
+		FileResult fileResult = new FileResult("unittest", 400,false);
+		createObjectFile(fileResult);
+		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+				testFileDir, "unittest");
+		locationDataUploaderHandler
+				.setHttpClientFactory(new MockHttpClientFactory(
+						protocolVersion, new int[] { 400 }, "URL not found"));
+		Config.getInstance().setUploadBatchSize(10);
+		locationDataUploaderHandler.uploadData();
+		testResults(fileResult);
+	}
+
+	@Test
+	public void uploadDataResultMapWithBadStatusThanGoodStatsTest()
+			throws ClientProtocolException, IOException {
+		List<FileResult> fileResultList = new ArrayList<FileResult>();
+		fileResultList.add(new FileResult("unittest1", 400,true));
+		fileResultList.add(new FileResult("unittest2", 200,true));
+		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+				testFileDir, "unittest");
+		for (FileResult fileResult : fileResultList) {
+			createObjectFile(fileResult);
+		}
+
+		for (FileResult fileResult : fileResultList) {
+			locationDataUploaderHandler
+					.setHttpClientFactory(new MockHttpClientFactory(
+							protocolVersion, new int[] { fileResult.result },
+							"URL not found"));
+			Config.getInstance().setUploadBatchSize(10);
+			locationDataUploaderHandler.uploadData();
+		}
+
+		for (FileResult fileResult : fileResultList) {
+			fileResult.result = 200;
+			testResults(fileResult);
+		}
 
 	}
 
 	/**
-	 This test must be run last because it deletes the test file
+	 * This test must be run last because it deletes the test file
 	 */
 	@Test
-	public void uploadDataResultMapWithGoodStatusLastTest() throws ClientProtocolException, IOException {
+	public void uploadDataResultMapWithGoodStatusLastTest()
+			throws ClientProtocolException, IOException {
+		FileResult fileResult = new FileResult("unittest", 200,true);
+		createObjectFile(fileResult);
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
-				testFileDir,"unittest");
-		locationDataUploaderHandler.setHttpClientFactory(new MockHttpClientFactory(protocolVersion,new int[]{201},"URL not found"));
+				testFileDir, "unittest");
+		locationDataUploaderHandler
+				.setHttpClientFactory(new MockHttpClientFactory(
+						protocolVersion, new int[] { 200 }, "URL not found"));
 		Config.getInstance().setUploadBatchSize(10);
 		locationDataUploaderHandler.uploadData();
-		Map<Integer,Integer>resultMap=FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()).getResultMap();
-       assertTrue("resultMap is empty",resultMap.size()>0);
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-		}
-		System.out.println(resultMap);
-		for (Entry<Integer, Integer> entry : resultMap
-				.entrySet()) {
-			assertTrue("expecting 201 status code but was " + entry.getValue(),
-					entry.getValue() == 201);
-		}
-		locationDataUploaderHandler.cleanUpExistingFiles();
-		assertNull("Could not find fileResultMap",FileResultMapsWrapper.getInstance().getFileResultMaps().get(testFile.getAbsolutePath()));
-		File file=new File(testFile.getAbsolutePath());
-		assertFalse("file should have been deleted because all status codes are good",file.exists());
+		testResults(fileResult);
 	}
+
+	class FileResult {
+		String fileName;
+		int result;
+		File file;
+		boolean fileShouldBeDeleted;
+
+		public FileResult(String fileName, int result,boolean fileShouldBeDeleted) {
+			super();
+			this.fileName = fileName;
+			this.fileShouldBeDeleted=fileShouldBeDeleted;
+			this.result = result;
+			file = new File(testFileDir.getPath() + "/" + fileName + ".obj");
+		}
 	
+	}
 }

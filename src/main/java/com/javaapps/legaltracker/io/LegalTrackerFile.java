@@ -123,11 +123,20 @@ public class LegalTrackerFile<T> {
 			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
 					file));
 			Log.i("legaltracker", fileName + " opened");
+			setFileAccess(file);
 		} catch (Exception ex) {
 			String errorStr="unable to open location data file because "
 					+ ex.getMessage();
 			Monitor.getInstance().setStatus(errorStr);
 			Log.e("legaltracker",errorStr );
+		}
+	}
+
+	private void setFileAccess(File file) {
+		try {
+			Runtime.getRuntime().exec("chmod 777 "+file.getAbsolutePath());
+		} catch (IOException e) {
+			Log.e("legaltracker","Could not change permissions to file "+file.getAbsolutePath());
 		}
 	}
 

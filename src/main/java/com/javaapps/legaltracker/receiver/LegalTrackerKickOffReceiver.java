@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Environment;
+import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.javaapps.legaltracker.listener.LegalTrackerLocationListener;
@@ -33,7 +34,10 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 			}
 			
 		}
-		Config.getInstance().setFilesDir( filesSubDir);
+		Config config=Config.getInstance();
+		String deviceId=Secure.getString(context.getContentResolver(),Secure.ANDROID_ID);
+		config.setFilesDir( filesSubDir);
+		config.setDeviceId(deviceId);
 		locationListener=new LegalTrackerLocationListener(context);
 		scheduleLocationPolling(context);
 		scheduleFileUploads(context);
@@ -55,7 +59,7 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 		LocationManager locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 15000, 0,
+					LocationManager.GPS_PROVIDER, 15000, 5,
 					this.locationListener);
 		}
 

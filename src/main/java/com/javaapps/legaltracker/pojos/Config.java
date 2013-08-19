@@ -7,6 +7,8 @@ public class Config {
 	private static Config config;
 
 	private File filesDir;
+	
+	private String deviceId="12345";
 
 	private int testStatusCode = 200;
 
@@ -16,11 +18,11 @@ public class Config {
 
 	private long minimumLoggingIntervals = 15000;
 
-	private long httpTimeout = 1000;
+	private long httpTimeout = 10000;
 
 	private int uploadBatchSize = 1000;
 
-	private String locationDataEndpoint = "http://192.168.2.6:8080/demo/people/uploadLocationData";
+	private String locationDataEndpoint = "http://legaltrackerserver.myjavaapps.cloudbees.net/backend/uploadLocationData";
 
 	public String getLocationDataEndpoint() {
 		return locationDataEndpoint;
@@ -42,6 +44,16 @@ public class Config {
 
 	public void setHttpTimeout(long httpTimeout) {
 		this.httpTimeout = httpTimeout;
+	}
+
+	
+	
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public long getMinimumLoggingIntervals() {

@@ -52,10 +52,6 @@ public class LocationDataUploaderHandler {
 	 * .List)
 	 */
 	public void uploadData() {
-		if (!cleanUpExistingFiles()) {
-			Log.i("legalfiletracker",
-					"Unable to delete all existing buffer files");
-		}
 		StringBuilder sb = new StringBuilder();
 		for (File file : this.filesDir.listFiles()) {
 			String fileName = file.getName();
@@ -67,24 +63,7 @@ public class LocationDataUploaderHandler {
 		Monitor.getInstance().setArchiveFiles(sb.toString());
 	}
 
-	boolean cleanUpExistingFiles() {
-		boolean retValue = true;
-		for (FileResultMap fileResultMap : FileResultMapsWrapper.getInstance()
-				.getFileResultMaps().values()) {
-			String fileName = fileResultMap.getFileName();
-			if (!fileResultMap.allBatchesUploaded()) {
-				retValue = false;
-				Log.e("legaltracker", "Unable to delete " + fileName);
-			} else {
-				File file = new File(fileName);
-				retValue = retValue && file.delete();
-				FileResultMapsWrapper.getInstance().getFileResultMaps()
-						.remove(fileName);
 
-			}
-		}
-		return retValue;
-	}
 
 	private FileResultMap getResultMap(File file) throws FileNotFoundException,
 			IOException, ClassNotFoundException {
@@ -179,7 +158,7 @@ public class LocationDataUploaderHandler {
 		boolean retValue = true;
 		Monitor.getInstance().incrementTotalPointsUploaded(
 				locationDataList.size());
-		LocationDataUpload locationDataUpload = new LocationDataUpload(
+		LocationDataUpload locationDataUpload = new LocationDataUpload(Config.getInstance().getDeviceId(),
 				new Date(), locationDataList);
 		try {
 			Monitor.getInstance().setLastUploadDate(new Date());
@@ -229,6 +208,12 @@ public class LocationDataUploaderHandler {
 					if (statusCode / 100 == 2) {
 						Monitor.getInstance().incrementTotalPointsProcessed(
 								batchSize);
+						if (fileResultMap.allBatchesUploaded()){
+							File file=new File(fileResultMap.getFileName());
+							if ( ! file.delete()){
+								Log.i("legaltracker","Could not delete "+file.getAbsolutePath());
+							}
+						}
 					} else {
 						Monitor.getInstance().incrementTotalPointsNotProcessed(
 								batchSize);
