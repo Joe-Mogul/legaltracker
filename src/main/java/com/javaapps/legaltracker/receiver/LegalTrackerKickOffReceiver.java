@@ -59,7 +59,7 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 		LocationManager locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 15000, 5,
+					LocationManager.GPS_PROVIDER, 1000, 10,
 					this.locationListener);
 		}
 

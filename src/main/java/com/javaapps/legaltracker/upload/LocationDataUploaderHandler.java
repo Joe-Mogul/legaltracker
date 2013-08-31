@@ -158,8 +158,9 @@ public class LocationDataUploaderHandler {
 		boolean retValue = true;
 		Monitor.getInstance().incrementTotalPointsUploaded(
 				locationDataList.size());
+		//upload timestamp will be the first date in the list
 		LocationDataUpload locationDataUpload = new LocationDataUpload(Config.getInstance().getDeviceId(),
-				new Date(), locationDataList);
+				locationDataList.get(0).getDate(), locationDataList);
 		try {
 			Monitor.getInstance().setLastUploadDate(new Date());
 			String jsonStr = locationDataUpload.toJsonString();

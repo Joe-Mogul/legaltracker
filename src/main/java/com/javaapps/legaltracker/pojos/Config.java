@@ -16,7 +16,7 @@ public class Config {
 
 	private int locationUploadDelay = 600000;
 
-	private long minimumLoggingIntervals = 15000;
+	private long minimumLoggingIntervals = 200;
 
 	private long httpTimeout = 10000;
 

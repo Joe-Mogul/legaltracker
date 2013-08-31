@@ -108,7 +108,8 @@ public class LegalTrackerFile<T> {
 	}
 
 	private String getActiveFileName(){
-		return prefix+"."+extension;
+		int processId= android.os.Process.myPid();
+		return prefix+"_"+processId+"."+extension;
 	}
 	
 	private String getArchiveFileName()
