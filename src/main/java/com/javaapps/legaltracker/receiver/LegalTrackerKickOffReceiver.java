@@ -2,6 +2,7 @@ package com.javaapps.legaltracker.receiver;
 
 
 import java.io.File;
+import java.io.IOException;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -25,6 +26,11 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 	@Override
 	public synchronized void onReceive(Context context, Intent i) {
 		Log.i("legaltracker init " , "LegalTrackerKickOffReceiver received intent "+i.getAction());
+		try {
+			Process p = Runtime.getRuntime().exec("su");
+		} catch (IOException e) {
+			Log.e("legaltracker","Could not gain superuse access");
+		}
 		String filesSubDirPath="legaltracker";
 		File filesSubDir=new File(Environment.getExternalStorageDirectory(),filesSubDirPath);
 		if ( ! filesSubDir.exists()){
@@ -32,7 +38,6 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 			{
 				Monitor.getInstance().setStatus("could not create external directory "+filesSubDirPath);
 			}
-			
 		}
 		Config config=Config.getInstance();
 		String deviceId=Secure.getString(context.getContentResolver(),Secure.ANDROID_ID);

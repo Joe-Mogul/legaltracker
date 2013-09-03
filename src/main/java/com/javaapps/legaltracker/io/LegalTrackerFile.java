@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,12 +109,12 @@ public class LegalTrackerFile<T> {
 	}
 
 	private String getActiveFileName(){
-		int processId= android.os.Process.myPid();
-		return prefix+"_"+processId+"."+extension;
+		return prefix+"."+extension;
 	}
 	
 	private String getArchiveFileName()
 	{
+		DateFormat dateFormat=new SimpleDateFormat("yyyyMMddHHmmss");
 		return prefix+ARCHIVE_STRING+dateFormat.format(new Date())+"."+extension;
 	}
 	
@@ -121,10 +122,13 @@ public class LegalTrackerFile<T> {
 		try {
 			String fileName=getActiveFileName();
 			File file = new File(filesDir, fileName);
+			if ( !file.canWrite()){
+				file.setWritable(false, true);
+			}
 			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
 					file));
 			Log.i("legaltracker", fileName + " opened");
-			setFileAccess(file);
+			//setFileAccess(file);
 		} catch (Exception ex) {
 			String errorStr="unable to open location data file because "
 					+ ex.getMessage();
