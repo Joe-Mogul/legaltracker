@@ -1,7 +1,7 @@
 package com.javaapps.legaltracker.io;
 
 public enum FileType {
-	Location("locations","obj"), Alert("alerts","obj");
+	Location("locations","obj"), Alert("alerts","obj"), GForce("gforce","obj");
 	
 	private String prefix;
 	private String extension;

@@ -7,6 +7,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.javaapps.legaltracker.pojos.Config;
+import com.javaapps.legaltracker.pojos.Constants;
 
 import android.util.Log;
 
@@ -29,7 +30,7 @@ public class HttpClientFactoryImpl implements HttpClientFactory {
 				return null;
 			}
 		} catch (InterruptedException ex) {
-			Log.i("legaltracker", "http client is locked cant upload");
+			Log.i(Constants.LEGAL_TRACKER_TAG, "http client is locked cant upload");
 			return null;
 		} finally {
 			lock.unlock();

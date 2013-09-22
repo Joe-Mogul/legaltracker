@@ -9,18 +9,98 @@ public class Monitor {
 	private String gpsStatus="Not Available";
 	private String wifiStatus="Not Available";
 	private String lastConnectionError;
+	private String lastGForceConnectionError;
 	private String lastLocation="No location yet";
 	private Date lastUploadDate;
+	private Date lastGForceUploadDate;
 	private int numberOfPointsLoggedSinceUpload;
 	private int numberOfUploads;
+	private int numberOfGForceUploads;
 	private String archiveFiles;
 	private int lastUploadStatusCode=-1;
+	private int lastGForceUploadStatusCode=-1;
 	private int totalPointsLogged=0;
 	private int totalPointsUploaded=0;
 	private int totalPointsProcessed=0;
 	private int totalPointsNotProcessed=0;
+	private int totalGForcePointsLogged=0;
+	private int totalGForcePointsUploaded=0;
+	private int totalGForcePointsProcessed=0;
+	private int totalGForcePointsNotProcessed=0;
 	private int pointsInBuffer=0;
+	private int gforcePointsInBuffer=0;
 	private long currentFileSize=0;
+	private long gforceFileSize=0;
+	
+	
+	
+	public Date getLastGForceUploadDate() {
+		return lastGForceUploadDate;
+	}
+
+	public void setLastGForceUploadDate(Date lastGForceUploadDate) {
+		this.lastGForceUploadDate = lastGForceUploadDate;
+	}
+
+	public int getNumberOfGForceUploads() {
+		return numberOfGForceUploads;
+	}
+
+	public void setNumberOfGForceUploads(int numberOfGForceUploads) {
+		this.numberOfGForceUploads = numberOfGForceUploads;
+	}
+
+	public static Monitor getMonitor() {
+		return monitor;
+	}
+
+	public int getTotalGForcePointsLogged() {
+		return totalGForcePointsLogged;
+	}
+
+	public int getTotalGForcePointsUploaded() {
+		return totalGForcePointsUploaded;
+	}
+
+	public int getTotalGForcePointsProcessed() {
+		return totalGForcePointsProcessed;
+	}
+
+	public int getTotalGForcePointsNotProcessed() {
+		return totalGForcePointsNotProcessed;
+	}
+
+	public int getGforcePointsInBuffer() {
+		return gforcePointsInBuffer;
+	}
+
+	public void setGforcePointsInBuffer(int gforcePointsInBuffer) {
+		this.gforcePointsInBuffer = gforcePointsInBuffer;
+	}
+
+	public String getLastGForceConnectionError() {
+		return lastGForceConnectionError;
+	}
+
+	public void setLastGForceConnectionError(String lastGForceConnectionError) {
+		this.lastGForceConnectionError = lastGForceConnectionError;
+	}
+
+	public int getLastGForceUploadStatusCode() {
+		return lastGForceUploadStatusCode;
+	}
+
+	public void setLastGForceUploadStatusCode(int lastGForceUploadStatusCode) {
+		this.lastGForceUploadStatusCode = lastGForceUploadStatusCode;
+	}
+
+	public long getGforceFileSize() {
+		return gforceFileSize;
+	}
+
+	public void setGforceFileSize(long gforceFileSize) {
+		this.gforceFileSize = gforceFileSize;
+	}
 
 	public String getStatus() {
 		return status;
@@ -122,6 +202,23 @@ public class Monitor {
 		totalPointsUploaded+=size;
 	}
 
+	
+	public void incrementTotalGForcePointsProcessed(int size) {
+		totalGForcePointsProcessed+=size;
+	}
+
+	public void incrementTotalGForcePointsNotProcessed(int size) {
+		totalGForcePointsNotProcessed+=size;
+	}
+
+	public void incrementTotalGForcePointsLogged(int size) {
+		totalGForcePointsLogged+=size;
+	}
+
+	public void incrementTotalGForcePointsUploaded(int size) {
+		totalGForcePointsUploaded+=size;
+	}
+
 	public int getTotalPointsProcessed() {
 		return totalPointsProcessed;
 	}
@@ -201,4 +298,6 @@ public class Monitor {
 	totalPointsNotProcessed=0;
 	pointsInBuffer=0;
 	}
+
+	
 }

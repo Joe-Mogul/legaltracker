@@ -27,10 +27,10 @@ public class LegalTrackerFileTest {
 	@Before
 	public void setup() {
 		try {
-			 String dirName="./unittestdir";
+			 String dirName="./target//unittestdir";
 			filesDir = new File(dirName);
 			if (! filesDir.exists()){
-				assertTrue(filesDir.mkdir());
+				assertTrue(filesDir.mkdirs());
 			}
 			Config.getInstance().setFilesDir(filesDir);
 			legalTrackerFile = new LegalTrackerFile( "unittest", "obj");

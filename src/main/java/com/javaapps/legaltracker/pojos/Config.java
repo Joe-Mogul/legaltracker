@@ -12,18 +12,29 @@ public class Config {
 
 	private int testStatusCode = 200;
 
-	private int locationUploadPeriod = 600000;
+	private int gforceUploadPeriod = 75000;
 
-	private int locationUploadDelay = 600000;
+	private int gforceUploadDelay = 75000;
 
-	private long minimumLoggingIntervals = 200;
+	private int locationUploadPeriod = 60000;
+
+	private int locationUploadDelay = 60000;
+
+	private long minimumLoggingIntervals = 400;
+	
+	private int locationListenerBufferSize=100;
+	
+	private int gforceListenerBufferSize=100;
 
 	private long httpTimeout = 10000;
 
 	private int uploadBatchSize = 1000;
-
+	
+	
 	private String locationDataEndpoint = "http://legaltrackerserver.myjavaapps.cloudbees.net/backend/uploadLocationData";
 
+	private String gforceDataEndpoint = "http://legaltrackerserver.myjavaapps.cloudbees.net/backend/uploadGForceData";
+	
 	public String getLocationDataEndpoint() {
 		return locationDataEndpoint;
 	}
@@ -31,11 +42,22 @@ public class Config {
 	public void setLocationDataEndpoint(String locationDataEndpoint) {
 		this.locationDataEndpoint = locationDataEndpoint;
 	}
+		
+
+	public String getGforceDataEndpoint() {
+		return gforceDataEndpoint;
+	}
+
+	public void setGforceDataEndpoint(String gforceDataEndpoint) {
+		this.gforceDataEndpoint = gforceDataEndpoint;
+	}
 
 	public int getLocationListenerBufferSize() {
-		// return (600000/(int)this.minimumLoggingIntervals);
-		return 40;
-		// we should store 10 minutes of logged points in the buffer
+		return locationListenerBufferSize;
+	}
+
+	public void setLocationListenerBufferSize(int locationListenerBufferSize) {
+		this.locationListenerBufferSize = locationListenerBufferSize;
 	}
 
 	public long getHttpTimeout() {
@@ -104,6 +126,30 @@ public class Config {
 		this.testStatusCode = testStatusCode;
 	}
 
+	public int getGforceUploadPeriod() {
+		return gforceUploadPeriod;
+	}
+
+	public void setGforceUploadPeriod(int gforceUploadPeriod) {
+		this.gforceUploadPeriod = gforceUploadPeriod;
+	}
+
+	public int getGforceUploadDelay() {
+		return gforceUploadDelay;
+	}
+
+	public void setGforceUploadDelay(int gforceUploadDelay) {
+		this.gforceUploadDelay = gforceUploadDelay;
+	}
+
+	public int getGforceListenerBufferSize() {
+		return gforceListenerBufferSize;
+	}
+
+	public void setGforceListenerBufferSize(int gforceListenerBufferSize) {
+		this.gforceListenerBufferSize = gforceListenerBufferSize;
+	}
+
 	public synchronized static Config getInstance() {
 		if (config == null) {
 			config = new Config();
@@ -114,5 +160,7 @@ public class Config {
 	private Config() {
 
 	}
+
+
 
 }

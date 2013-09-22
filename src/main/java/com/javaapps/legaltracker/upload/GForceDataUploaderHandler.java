@@ -25,18 +25,18 @@ import android.util.Log;
 
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
-import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
-import com.javaapps.legaltracker.pojos.LocationDataUpload;
+import com.javaapps.legaltracker.pojos.GForceData;
+import com.javaapps.legaltracker.pojos.GForceDataUpload;
 import com.javaapps.legaltracker.pojos.Monitor;
 
-public class LocationDataUploaderHandler {
+public class GForceDataUploaderHandler {
 
 	private HttpClientFactory httpClientFactory = new HttpClientFactoryImpl();
 
 	private File filesDir;
 	private String filePrefix;
 
-	public LocationDataUploaderHandler(File filesDir, String filePrefix) {
+	public GForceDataUploaderHandler(File filesDir, String filePrefix) {
 		this.filesDir = filesDir;
 		this.filePrefix = filePrefix;
 	}
@@ -110,28 +110,28 @@ public class LocationDataUploaderHandler {
 		try {
 			FileResultMap fileResultMap = getResultMap(file);
 			objectInputStream = new ObjectInputStream(new FileInputStream(file));
-			List<LegalTrackerLocation> batchLocationDataList = new ArrayList<LegalTrackerLocation>();
+			List<GForceData> gforceDataList = new ArrayList<GForceData>();
 			int index = 0;
 			try {
 				Object object = null;
 				while ((object = objectInputStream.readObject()) != null) {
-					LegalTrackerLocation legalTrackerLocation = (LegalTrackerLocation) object;
-					batchLocationDataList.add(legalTrackerLocation);
-					if (batchLocationDataList.size() > Config.getInstance()
+					GForceData gforceData = (GForceData) object;
+					gforceDataList.add(gforceData);
+					if (gforceDataList.size() > Config.getInstance()
 							.getUploadBatchSize()) {
-						uploadBatch(fileResultMap, index, batchLocationDataList);
+						uploadBatch(fileResultMap, index, gforceDataList);
 						index++;
-						batchLocationDataList = new ArrayList<LegalTrackerLocation>();
+						gforceDataList = new ArrayList<GForceData>();
 					}
 				}
 			} catch (EOFException ex) {
 			}
-			if (batchLocationDataList.size() > 0) {
-				uploadBatch(fileResultMap, index, batchLocationDataList);
+			if (gforceDataList.size() > 0) {
+				uploadBatch(fileResultMap, index, gforceDataList);
 			}
 		} catch (Exception ex) {
 			Log.e(Constants.LEGAL_TRACKER_TAG,
-					"unable to open location data file because "
+					"unable to open gforce data file because "
 							+ ex.getMessage());
 		} finally {
 			closeInputStream(objectInputStream);
@@ -152,21 +152,21 @@ public class LocationDataUploaderHandler {
 	}
 
 	public boolean uploadBatch(FileResultMap fileResultMap, int index,
-			List<LegalTrackerLocation> locationDataList) {
-		if (locationDataList.size() == 0) {
+			List<GForceData> gforceDataList) {
+		if (gforceDataList.size() == 0) {
 			return true;
 		}
 		boolean retValue = true;
-		Monitor.getInstance().incrementTotalPointsUploaded(
-				locationDataList.size());
+		Monitor.getInstance().incrementTotalGForcePointsUploaded(
+				gforceDataList.size());
 		//upload timestamp will be the first date in the list
-		LocationDataUpload locationDataUpload = new LocationDataUpload(Config.getInstance().getDeviceId(),
-				locationDataList.get(0).getDate(), locationDataList);
+		GForceDataUpload gforceDataUpload = new GForceDataUpload(Config.getInstance().getDeviceId(),
+				new Date(gforceDataList.get(0).getSampleDateInMillis()), gforceDataList);
 		try {
-			Monitor.getInstance().setLastUploadDate(new Date());
-			String jsonStr = locationDataUpload.toJsonString();
+			Monitor.getInstance().setLastGForceUploadDate(new Date());
+			String jsonStr = gforceDataUpload.toJsonString();
 			DataUploadTask dataUploadTask = new DataUploadTask(
-					locationDataList.size(), fileResultMap, index, jsonStr);
+					gforceDataList.size(), fileResultMap, index, jsonStr);
 			Thread thread = new Thread(dataUploadTask);
 
 			thread.start();
@@ -199,7 +199,7 @@ public class LocationDataUploaderHandler {
 				try {
 					HttpPost httppost = new HttpPost(Config.getInstance()
 
-					.getLocationDataEndpoint());
+					.getGforceDataEndpoint());
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
 							2);
 					nameValuePairs.add(new BasicNameValuePair("data", jsonStr));
@@ -208,7 +208,7 @@ public class LocationDataUploaderHandler {
 					int statusCode = response.getStatusLine().getStatusCode();
 					fileResultMap.getResultMap().put(index, statusCode);
 					if (statusCode / 100 == 2) {
-						Monitor.getInstance().incrementTotalPointsProcessed(
+						Monitor.getInstance().incrementTotalGForcePointsProcessed(
 								batchSize);
 						if (fileResultMap.allBatchesUploaded()){
 							File file=new File(fileResultMap.getFileName());
@@ -217,14 +217,14 @@ public class LocationDataUploaderHandler {
 							}
 						}
 					} else {
-						Monitor.getInstance().incrementTotalPointsNotProcessed(
+						Monitor.getInstance().incrementTotalGForcePointsNotProcessed(
 								batchSize);
 					}
-					Monitor.getInstance().setLastUploadStatusCode(statusCode);
+					Monitor.getInstance().setLastGForceUploadStatusCode(statusCode);
 				} catch (Exception e) {
-					Monitor.getInstance().setLastUploadStatusCode(-99);
+					Monitor.getInstance().setLastGForceUploadStatusCode(-99);
 					Monitor.getInstance()
-							.setLastConnectionError(e.getMessage());
+							.setLastGForceConnectionError(e.getMessage());
 					Log.e(Constants.LEGAL_TRACKER_TAG,
 							"cannot  upload data to server because because"
 									+ e.getMessage());

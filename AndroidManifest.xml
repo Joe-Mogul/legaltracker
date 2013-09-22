@@ -24,7 +24,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.javaapps.legaltracker.activity.LegalTrackerActivity" >
+        <activity android:name=".activity.LegalTrackerActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.javaapps.legaltracker.activity.ConfigurationActivity"
+            android:name=".activity.ConfigurationActivity"
             android:label="@string/configuration"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
@@ -40,13 +40,17 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.javaapps.legaltracker.receiver.LegalTrackerKickOffReceiver" >
+        <receiver android:name=".receiver.LegalTrackerKickOffReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="kickOffLogger" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.javaapps.legaltracker.receiver.LocationDataUploaderReceiver" >
+        <receiver android:name=".receiver.LocationDataUploaderReceiver" >
+        </receiver>
+        <receiver android:name=".receiver.GForceDataUploaderReceiver" >
         </receiver>
     </application>
 

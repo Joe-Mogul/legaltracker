@@ -18,6 +18,7 @@ import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
+import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 import com.javaapps.legaltracker.pojos.Monitor;
 
@@ -33,7 +34,7 @@ public class LocationBuffer {
 
 	private Long lastGoodUpdate = System.currentTimeMillis();
 
-	public static LocationBuffer getInstance(File filesDir) {
+	public static LocationBuffer getInstance() {
 		if (locationBuffer == null) {
 			locationBuffer = new LocationBuffer();
 		}
@@ -42,22 +43,22 @@ public class LocationBuffer {
 
 	private LocationBuffer() {
 		try {
-			Log.i("legaltracker", "opening internal file");
+			Log.i(Constants.LEGAL_TRACKER_TAG, "opening internal file");
 			legalTrackerFile = LegalTrackerFileFactory.getLegalTrackerFile(
 					FileType.Location.getPrefix(),
 					FileType.Location.getExtension());
-			Log.i("legaltracker", "opened internal file");
+			Log.i(Constants.LEGAL_TRACKER_TAG, "opened internal file");
 		} catch (Exception ex) {
-			Log.e("legaltracker ",
+			Log.e(Constants.LEGAL_TRACKER_TAG,
 					"unable to get location file because " + ex.getMessage());
 		}
 	}
 
+	
 	public void logLocation(Location location) {
 		if (gpsStatusOn) {
 			LegalTrackerLocation legalTrackerLocation = new LegalTrackerLocation(
 					location);
-
 			legalTrackerLocation
 					.setLastGoodUpdate(new Date(location.getTime()));
 			lastGoodUpdate = (new Date()).getTime();
@@ -69,14 +70,14 @@ public class LocationBuffer {
 			if (locationBufferList.size() > Config.getInstance()
 					.getLocationListenerBufferSize()) {
 				try {
-					Log.i("legaltracker", "starting to save save to file");
+					Log.i(Constants.LEGAL_TRACKER_TAG, "starting to save save to file");
 					locationBufferList = legalTrackerFile
 							.writeToObjectFile(locationBufferList);
-					Log.i("legaltracker", legalTrackerLocation.getLatitude()
+					Log.i(Constants.LEGAL_TRACKER_TAG, legalTrackerLocation.getLatitude()
 							+ " " + legalTrackerLocation.getLongitude()
 							+ " saved to file");
 				} catch (IOException e) {
-					Log.e("LegalTrackerLocationListener",
+					Log.e(Constants.LEGAL_TRACKER_TAG,
 							"Unable to save location buffer because "
 									+ e.getMessage());
 				}
@@ -84,7 +85,7 @@ public class LocationBuffer {
 		} else {
 			Monitor.getInstance().setLastLocation(
 					"No locations logged because GPS not enabled");
-			Log.i("legaltracker", "gps not enabled");
+			Log.i(Constants.LEGAL_TRACKER_TAG, "gps not enabled");
 		}
 
 	}
@@ -92,17 +93,17 @@ public class LocationBuffer {
 	public void statusChanged(String provider, int status, Bundle bundle) {
 		System.out.println("status changed");
 		if (status == LocationProvider.AVAILABLE) {
-			Log.i("LegalTrackerLocationListener", provider
+			Log.i(Constants.LEGAL_TRACKER_TAG, provider
 					+ " service is now available");
 			Monitor.getInstance().setGpsStatus("GPS available");
 			gpsStatusOn = true;
 		} else if (status == LocationProvider.OUT_OF_SERVICE) {
-			Log.i("LegalTrackerLocationListener", provider
+			Log.i(Constants.LEGAL_TRACKER_TAG, provider
 					+ " service is now available");
 			gpsStatusOn = false;
 			Monitor.getInstance().setGpsStatus("GPS out of service");
 		} else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-			Log.i("LegalTrackerLocationListener", provider
+			Log.i(Constants.LEGAL_TRACKER_TAG, provider
 					+ " service is temporarily unavailable");
 			gpsStatusOn = false;
 			Monitor.getInstance().setGpsStatus("GPS temporarily unavailable");

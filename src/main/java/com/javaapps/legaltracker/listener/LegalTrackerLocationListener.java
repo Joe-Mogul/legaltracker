@@ -35,14 +35,14 @@ public class LegalTrackerLocationListener implements LocationListener {
 	
 	private static long MILLI_VARIANCE=75;// milli seconds
 
-	public LegalTrackerLocationListener(Context context) {
-		this.filesDir = context.getFilesDir();
+	public LegalTrackerLocationListener() {
+		this.filesDir = Config.getInstance().getFilesDir();
 	}
 
 	public void onLocationChanged(Location location) {
 		long minimumLoggingIntervals=Config
 				.getInstance().getMinimumLoggingIntervals();
-		if (System.currentTimeMillis() - lastDate >= minimumLoggingIntervals) {
+			if (System.currentTimeMillis() - lastDate >= minimumLoggingIntervals) {
 			Monitor.getInstance().setGpsStatus("GPS available");
 			/*this point has been logged already , skip it */
 			if ( ! sampleDateHasChanged(location)){
@@ -55,7 +55,7 @@ public class LegalTrackerLocationListener implements LocationListener {
 			lastLatitude=location.getLatitude();
 			lastLongitude=location.getLongitude();
 			lastDate = System.currentTimeMillis();
-			LocationBuffer.getInstance(filesDir).logLocation(location);
+			LocationBuffer.getInstance().logLocation(location);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class LegalTrackerLocationListener implements LocationListener {
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle bundle) {
-		LocationBuffer.getInstance(filesDir).statusChanged(provider, status,
+		LocationBuffer.getInstance().statusChanged(provider, status,
 				bundle);
 	}
 

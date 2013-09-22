@@ -27,14 +27,13 @@ import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.GForceData;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
 import com.javaapps.legaltracker.upload.FileResultMapsWrapper;
-import com.javaapps.legaltracker.upload.LocationDataUploaderHandler;
+import com.javaapps.legaltracker.upload.GForceDataUploaderHandler;
 import com.javaapps.legaltracker.utils.MockHttpClientFactory;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public class LocationDataUploaderHandlerTest {
+public class GForceDataUploaderHandlerTest {
 
-	private List<LegalTrackerLocation> locationDataList = new ArrayList<LegalTrackerLocation>();
 	private static File testFileDir = new File("unitTestDir");
 	private static long systemTimeInMillis=System.currentTimeMillis();
 	private ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 2);
@@ -49,7 +48,7 @@ public class LocationDataUploaderHandlerTest {
 			Config.getInstance().setLocationDataEndpoint(
 					"http://boguswebsite.go");
 		} catch (Exception ex) {
-			fail("LocationDataUploaderHandlerTest setup failed because "
+			fail("GForceDataUploaderHandlerTest setup failed because "
 					+ ex.getMessage());
 		}
 	}
@@ -64,7 +63,9 @@ public class LocationDataUploaderHandlerTest {
 		FileResultMapsWrapper.getInstance().getFileResultMaps().clear();
 	}
 
-	private void createLocationObjectFile(FileResult fileResult,int numberOfSamples,int timeDelta)
+
+
+	private void createGForceObjectFile(FileResult fileResult,int numberOfSamples,int timeDelta)
 			throws FileNotFoundException, IOException {
 		if (fileResult.file.exists()) {
 			fileResult.file.delete();
@@ -72,15 +73,13 @@ public class LocationDataUploaderHandlerTest {
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
 				fileResult.file));
 		for (int ii = 0; ii < numberOfSamples; ii=ii+timeDelta) {
-			LegalTrackerLocation location = new LegalTrackerLocation(40.0,
-					-80.0, 10.f, 20.0f, 10.0f, systemTimeInMillis+ii);
-			oos.writeObject(location);
+			GForceData gforceData = new GForceData(1,2,3,systemTimeInMillis+ii);
+			oos.writeObject(gforceData);
 		}
 		oos.flush();
 		oos.close();
 	}
-
-		@Before
+	@Before
 	public void setup() {
 		try {
 		} catch (Exception ex) {
@@ -112,21 +111,21 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapSizeTest() throws ClientProtocolException,
 			IOException {
 		FileResult fileResult = new FileResult("unittest", -1,false);
-		createLocationObjectFile(fileResult,100,1);
-		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+		createGForceObjectFile(fileResult,100,1);
+		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
-		locationDataUploaderHandler
+		gforceDataUploaderHandler
 				.setHttpClientFactory(new MockHttpClientFactory(
 						protocolVersion, new int[] { 400 }, "URL not found"));
 		Config.getInstance().setUploadBatchSize(13);
-		locationDataUploaderHandler.uploadData();
+		gforceDataUploaderHandler.uploadData();
 		Map<Integer, Integer> resultMap = FileResultMapsWrapper.getInstance()
 				.getFileResultMaps().get(fileResult.file.getAbsolutePath())
 				.getResultMap();
 		assertTrue("expecting 8 but was " + resultMap.size(),
 				resultMap.size() == 8);
 		Config.getInstance().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData();
+		gforceDataUploaderHandler.uploadData();
 		assertTrue("expecting 10 but was " + resultMap.size(),
 				resultMap.size() == 10);
 	}
@@ -135,14 +134,14 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapWithBadStatusTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 400,false);
-		createLocationObjectFile(fileResult,100,1);
-		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+		createGForceObjectFile(fileResult,100,1);
+		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
-		locationDataUploaderHandler
+		gforceDataUploaderHandler
 				.setHttpClientFactory(new MockHttpClientFactory(
 						protocolVersion, new int[] { 400 }, "URL not found"));
 		Config.getInstance().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData();
+		gforceDataUploaderHandler.uploadData();
 		testResults(fileResult);
 	}
 
@@ -152,19 +151,19 @@ public class LocationDataUploaderHandlerTest {
 		List<FileResult> fileResultList = new ArrayList<FileResult>();
 		fileResultList.add(new FileResult("unittest1", 400,true));
 		fileResultList.add(new FileResult("unittest2", 200,true));
-		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
 		for (FileResult fileResult : fileResultList) {
-			createLocationObjectFile(fileResult,100,1);
+			createGForceObjectFile(fileResult,100,1);
 		}
 
 		for (FileResult fileResult : fileResultList) {
-			locationDataUploaderHandler
+			gforceDataUploaderHandler
 					.setHttpClientFactory(new MockHttpClientFactory(
 							protocolVersion, new int[] { fileResult.result },
 							"URL not found"));
 			Config.getInstance().setUploadBatchSize(10);
-			locationDataUploaderHandler.uploadData();
+			gforceDataUploaderHandler.uploadData();
 		}
 
 		for (FileResult fileResult : fileResultList) {
@@ -181,18 +180,31 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapWithGoodStatusLastTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 200,true);
-		createLocationObjectFile(fileResult,100,1);
-		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
+		createGForceObjectFile(fileResult,100,1);
+		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
-		locationDataUploaderHandler
+		gforceDataUploaderHandler
 				.setHttpClientFactory(new MockHttpClientFactory(
 						protocolVersion, new int[] { 200 }, "OK"));
 		Config.getInstance().setUploadBatchSize(10);
-		locationDataUploaderHandler.uploadData();
+		gforceDataUploaderHandler.uploadData();
 		testResults(fileResult);
 	}
 
-
+	@Test
+	public void uploadDataWithGForceDataTest()
+			throws ClientProtocolException, IOException {
+		FileResult fileResult = new FileResult("unittestLocation", 200,true);
+		createGForceObjectFile(fileResult,100,1);
+		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
+				testFileDir, "unittest");
+		gforceDataUploaderHandler
+				.setHttpClientFactory(new MockHttpClientFactory(
+						protocolVersion, new int[] { 200 }, "OK"));
+		Config.getInstance().setUploadBatchSize(10);
+		gforceDataUploaderHandler.uploadData();
+		testResults(fileResult);
+	}
 	class FileResult {
 		String fileName;
 		int result;

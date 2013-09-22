@@ -4,6 +4,7 @@ import com.javaapps.legaltracker.R;
 import com.javaapps.legaltracker.R.id;
 import com.javaapps.legaltracker.R.layout;
 import com.javaapps.legaltracker.R.menu;
+import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.Monitor;
 
 import android.app.Activity;
@@ -38,7 +39,7 @@ public class LegalTrackerActivity extends Activity {
 				.findViewById(R.id.ResetMonitor);
 		resetMonitorButton.setOnClickListener(new ResetMonitorListener());
 
-		Log.i("legaltracker", "activity kicked off");
+		Log.i(Constants.LEGAL_TRACKER_TAG, "activity kicked off");
 	}
 
 	@Override
@@ -81,25 +82,40 @@ public class LegalTrackerActivity extends Activity {
 		gpsStatusView.setText(monitor.getGpsStatus());
 		TextView lastConnectionErrorView = (TextView) findViewById(R.id.LastConnectionError);
 		lastConnectionErrorView.setText(monitor.getLastConnectionError());
+		TextView lastGForceConnectionErrorView = (TextView) findViewById(R.id.LastGForceConnectionError);
+		lastGForceConnectionErrorView.setText(monitor.getLastGForceConnectionError());
 		TextView lastLocationView = (TextView) findViewById(R.id.Location);
 		lastLocationView.setText(monitor.getLastLocation());
 		TextView loggedPointsView = (TextView) findViewById(R.id.Logged);
 		loggedPointsView.setText(String.valueOf(monitor.getTotalPointsLogged()));
+		TextView loggedGForcePointsView = (TextView) findViewById(R.id.GForceLogged);
+		loggedGForcePointsView.setText(String.valueOf(monitor.getTotalGForcePointsLogged()));
 		TextView uploadedPointsView = (TextView) findViewById(R.id.Uploaded);
 		uploadedPointsView.setText(String.valueOf(monitor.getTotalPointsUploaded()));
+		TextView uploadedGForcePointsView = (TextView) findViewById(R.id.GForceUploaded);
+		uploadedGForcePointsView.setText(String.valueOf(monitor.getTotalGForcePointsUploaded()));
 		TextView procesedPointsView = (TextView) findViewById(R.id.Processed);
 		procesedPointsView.setText(String.valueOf(monitor.getTotalPointsProcessed()));
+		TextView procesedGForcePointsView = (TextView) findViewById(R.id.GForceProcessed);
+		procesedGForcePointsView.setText(String.valueOf(monitor.getTotalGForcePointsProcessed()));
 		TextView notProcesedPointsView = (TextView) findViewById(R.id.NotProcessed);
 		notProcesedPointsView.setText(String.valueOf(monitor.getTotalPointsNotProcessed()));
+		TextView notProcesedGForcePointsView = (TextView) findViewById(R.id.GForceNotProcessed);
+		notProcesedGForcePointsView.setText(String.valueOf(monitor.getTotalGForcePointsNotProcessed()));
 		TextView archivesView = (TextView) findViewById(R.id.Archives);
 		archivesView.setText(monitor.getArchiveFiles());
 		TextView lastStatusCodeView = (TextView) findViewById(R.id.LastStatusCode);
 		lastStatusCodeView.setText(String.valueOf(monitor.getLastUploadStatusCode()));
+		TextView lastGForceStatusCodeView = (TextView) findViewById(R.id.LastGForceStatusCode);
+		lastGForceStatusCodeView.setText(String.valueOf(monitor.getLastGForceUploadStatusCode()));
 		TextView currentFileSizeView = (TextView) findViewById(R.id.CurrentFileSize);
 		currentFileSizeView.setText(String.valueOf(monitor.getCurrentFileSize()));
+		TextView currentGForceFileSizeView = (TextView) findViewById(R.id.CurrentGForceFileSize);
+		currentGForceFileSizeView.setText(String.valueOf(monitor.getGforceFileSize()));
 		TextView pointsInBufferView = (TextView) findViewById(R.id.PointsInBuffer);
 		pointsInBufferView.setText(String.valueOf(monitor.getPointsInBuffer()));
-
+		TextView gForcePointsInBufferView = (TextView) findViewById(R.id.GForcePointsInBuffer);
+		gForcePointsInBufferView.setText(String.valueOf(monitor.getGforcePointsInBuffer()));
 	}
 
 

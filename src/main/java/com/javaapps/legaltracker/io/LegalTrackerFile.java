@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.javaapps.legaltracker.pojos.Config;
+import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.Monitor;
 
 import android.content.ContextWrapper;
@@ -65,7 +66,7 @@ public class LegalTrackerFile<T> {
 					}
 				} catch (Exception ex) {
 					errorThrown = true;
-					Log.e("legaltracker",
+					Log.e(Constants.LEGAL_TRACKER_TAG,
 							"cannot save location buffer because "
 									+ ex.getMessage());
 					retList.add(object);
@@ -76,7 +77,12 @@ public class LegalTrackerFile<T> {
 				objectOutputStream.flush();
 			}
 			File file = new File(filesDir,getActiveFileName());
-			Monitor.getInstance().setCurrentFileSize(file.length());
+			if (file.getName().startsWith("location")){
+				Monitor.getInstance().setCurrentFileSize(file.length());
+			}else{
+				Monitor.getInstance().setGforceFileSize(file.length());
+			}
+		
 			lock.unlock();
 		}
 		return (retList);
@@ -89,7 +95,7 @@ public class LegalTrackerFile<T> {
 		if (!isNotLocked) {
 			return;
 		}
-		Log.i("legaltrackerreader", "moving data file to buffer");
+		Log.i(Constants.LEGAL_TRACKER_TAG, "moving data file to buffer");
 		try {
 			objectOutputStream.flush();
 			objectOutputStream.close();
@@ -98,7 +104,7 @@ public class LegalTrackerFile<T> {
 			file.renameTo(newFile);
 			Monitor.getInstance().setCurrentFileSize(0);
 		} catch (Exception ex) {
-			Log.e("legaltrackerreader",
+			Log.e(Constants.LEGAL_TRACKER_TAG,
 					"unable move data file because "
 							+ ex.getMessage());
 		} finally {
@@ -127,13 +133,12 @@ public class LegalTrackerFile<T> {
 			}
 			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
 					file));
-			Log.i("legaltracker", fileName + " opened");
 			//setFileAccess(file);
 		} catch (Exception ex) {
 			String errorStr="unable to open location data file because "
 					+ ex.getMessage();
 			Monitor.getInstance().setStatus(errorStr);
-			Log.e("legaltracker",errorStr );
+			Log.e(Constants.LEGAL_TRACKER_TAG,errorStr );
 		}
 	}
 
@@ -141,7 +146,7 @@ public class LegalTrackerFile<T> {
 		try {
 			Runtime.getRuntime().exec("chmod 777 "+file.getAbsolutePath());
 		} catch (IOException e) {
-			Log.e("legaltracker","Could not change permissions to file "+file.getAbsolutePath());
+			Log.e(Constants.LEGAL_TRACKER_TAG,"Could not change permissions to file "+file.getAbsolutePath());
 		}
 	}
 

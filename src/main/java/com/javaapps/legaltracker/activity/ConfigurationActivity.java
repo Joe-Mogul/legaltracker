@@ -12,6 +12,7 @@ import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
+import com.javaapps.legaltracker.pojos.Constants;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -75,7 +76,7 @@ public class ConfigurationActivity extends Activity {
 						FileType.Location.getExtension());
 				legalTrackerFile.deleteFiles();
 			} catch (Exception e) {
-				Log.e("legaltracker", "Could not delete archive files because "
+				Log.e(Constants.LEGAL_TRACKER_TAG, "Could not delete archive files because "
 						+ e.getMessage());
 			}
 		}
