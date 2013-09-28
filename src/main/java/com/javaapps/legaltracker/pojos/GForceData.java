@@ -3,38 +3,32 @@ package com.javaapps.legaltracker.pojos;
 import java.io.Serializable;
 import java.util.List;
 
-
 public class GForceData implements Serializable {
 
 	private long sampleDateInMillis;
 	private float x;
 	private float y;
 	private float z;
-	private final static float VARIANCE=0.3f;
-	
-	public double getGforce()
-	{
+	private final static float VARIANCE = 0.4f;
+
+	public double getGforce() {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 
-	public GForceData()
-	{
-		
+	public GForceData() {
+
 	}
-	
-	public GForceData(float x, float y,float z,long sampleDateInMillis) {
+
+	public GForceData(float x, float y, float z, long sampleDateInMillis) {
 		this.sampleDateInMillis = sampleDateInMillis;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-
-
 	public long getSampleDateInMillis() {
 		return sampleDateInMillis;
 	}
-
 
 	public void setSampleDateInMillis(long sampleDateInMillis) {
 		this.sampleDateInMillis = sampleDateInMillis;
@@ -64,48 +58,61 @@ public class GForceData implements Serializable {
 		this.z = z;
 	}
 
-	
-	
 	@Override
 	public String toString() {
 		return "GForceData [sampleDateInMillis=" + sampleDateInMillis + ", x="
 				+ x + ", y=" + y + ", z=" + z + "]";
 	}
 
-	public static GForceData averageData(List<GForceData> gforceDataList){
-		GForceData retGForceData=null;
-		if ( gforceDataList != null && gforceDataList.size()>0)
-		{
-	    float xTotal=0;
-	    float yTotal=0;
-	    float zTotal=0;
-	    long minimumTime=gforceDataList.get(0).getSampleDateInMillis();
-	    long maximumTime=gforceDataList.get(0).getSampleDateInMillis();
-	    long listSize=gforceDataList.size() ;
-		retGForceData=new GForceData();
-		for ( GForceData gforceData:gforceDataList)
-		{
-		xTotal+=gforceData.x;
-		yTotal+=gforceData.y;
-		zTotal+=gforceData.z;
-		minimumTime=Math.min(minimumTime, gforceData.getSampleDateInMillis());
-		maximumTime=Math.max(maximumTime, gforceData.getSampleDateInMillis());
+	public static GForceData maximumData(List<GForceData> gforceDataList) {
+		GForceData retGForceData = null;
+		double maximumGForce=0.0;
+		if (gforceDataList != null && gforceDataList.size() > 0) {
+			for (GForceData gforceData : gforceDataList) {
+                   if (gforceData.getGforce()>maximumGForce)
+                   {
+                	   maximumGForce=gforceData.getGforce();
+                	   retGForceData =gforceData;
+                   }
+			}
 		}
-		retGForceData.x=xTotal/listSize;
-		retGForceData.y=yTotal/listSize;
-		retGForceData.z=zTotal/listSize;
-		retGForceData.sampleDateInMillis=(minimumTime+maximumTime)/2;
+		return retGForceData;
+	}
+
+	public static GForceData averageData(List<GForceData> gforceDataList) {
+		GForceData retGForceData = null;
+		if (gforceDataList != null && gforceDataList.size() > 0) {
+			float xTotal = 0;
+			float yTotal = 0;
+			float zTotal = 0;
+			long minimumTime = gforceDataList.get(0).getSampleDateInMillis();
+			long maximumTime = gforceDataList.get(0).getSampleDateInMillis();
+			long listSize = gforceDataList.size();
+			retGForceData = new GForceData();
+			for (GForceData gforceData : gforceDataList) {
+				xTotal += gforceData.x;
+				yTotal += gforceData.y;
+				zTotal += gforceData.z;
+				minimumTime = Math.min(minimumTime,
+						gforceData.getSampleDateInMillis());
+				maximumTime = Math.max(maximumTime,
+						gforceData.getSampleDateInMillis());
+			}
+			retGForceData.x = xTotal / listSize;
+			retGForceData.y = yTotal / listSize;
+			retGForceData.z = zTotal / listSize;
+			retGForceData.sampleDateInMillis = (minimumTime + maximumTime) / 2;
 		}
 		return retGForceData;
 	}
 
 	public boolean isEqual(GForceData lastGForceData) {
-		if ( lastGForceData == null ){
+		if (lastGForceData == null) {
 			return false;
-		}else{
-			return (Math.abs(this.x-lastGForceData.x) <VARIANCE
-					&& Math.abs(this.y-lastGForceData.y)<VARIANCE
-					&& Math.abs(this.z-lastGForceData.z)<VARIANCE);
-	}
+		} else {
+			return (Math.abs(this.x - lastGForceData.x) < VARIANCE
+					&& Math.abs(this.y - lastGForceData.y) < VARIANCE && Math
+					.abs(this.z - lastGForceData.z) < VARIANCE);
+		}
 	}
 }

@@ -16,7 +16,6 @@ import android.util.Log;
 
 import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
-import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
@@ -44,9 +43,7 @@ public class LocationBuffer {
 	private LocationBuffer() {
 		try {
 			Log.i(Constants.LEGAL_TRACKER_TAG, "opening internal file");
-			legalTrackerFile = LegalTrackerFileFactory.getLegalTrackerFile(
-					FileType.Location.getPrefix(),
-					FileType.Location.getExtension());
+			legalTrackerFile=new LegalTrackerFile(FileType.Location.getPrefix(),FileType.Location.getExtension());
 			Log.i(Constants.LEGAL_TRACKER_TAG, "opened internal file");
 		} catch (Exception ex) {
 			Log.e(Constants.LEGAL_TRACKER_TAG,

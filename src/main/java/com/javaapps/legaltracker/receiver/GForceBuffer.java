@@ -1,6 +1,5 @@
 package com.javaapps.legaltracker.receiver;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import android.util.Log;
 
 import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
-import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.GForceData;
@@ -26,7 +24,7 @@ public class GForceBuffer {
 
 	private boolean gpsStatusOn = true;
 
-	private List<GForceData> runningGForceDataAverageList = new ArrayList<GForceData>();
+	private List<GForceData> shortTermGForceDataList = new ArrayList<GForceData>();
 
 	public static GForceBuffer getInstance() throws FileNotFoundException, IOException {
 		if (gforceBuffer == null) {
@@ -36,21 +34,19 @@ public class GForceBuffer {
 	}
 
 	private GForceBuffer() throws FileNotFoundException, IOException {
-			legalTrackerFile = LegalTrackerFileFactory
-					.getLegalTrackerFile(FileType.GForce.getPrefix(),
-							FileType.GForce.getExtension());
+			legalTrackerFile = new LegalTrackerFile(FileType.GForce.getPrefix(),FileType.GForce.getExtension());
 	}
 
 	public void logGForce(GForceData gforceData) {
 		if (gpsStatusOn) {
-			GForceData averagedGForceData = getAveragedGForceData(gforceData);
-			if (averagedGForceData == null) {
+			GForceData maximumGForceData = getMaximumGForceData(gforceData);
+			if (maximumGForceData == null) {
 				return;
 			}
-			gforceBufferList.add(averagedGForceData);
+			gforceBufferList.add(maximumGForceData);
 			Monitor.getInstance().incrementTotalGForcePointsLogged(1);
 			Monitor.getInstance().setGforcePointsInBuffer(gforceBufferList.size());
-			clearPointsInRunningAverageBuffer();
+			shortTermGForceDataList.clear();
 			Monitor monitor = Monitor.getInstance();
 			if (gforceBufferList.size() > Config.getInstance()
 					.getGforceListenerBufferSize()) {
@@ -71,31 +67,32 @@ public class GForceBuffer {
 
 	}
 
-	GForceData getAveragedGForceData(GForceData gforceData) {
+	GForceData getMaximumGForceData(GForceData gforceData) {
 		GForceData retGForceData = null;
-		runningGForceDataAverageList.add(gforceData);
-		long minimumTime = gforceData.getSampleDateInMillis();
+		shortTermGForceDataList.add(gforceData);
+		long minimumTime = gforceData.getSampleDateInMillis()+100000;
 		long maximumTime = 0;
-		for (GForceData tmpGForceData : runningGForceDataAverageList) {
+		for (GForceData tmpGForceData : shortTermGForceDataList) {
 			minimumTime = Math.min(minimumTime,
 					tmpGForceData.getSampleDateInMillis());
 			maximumTime = Math.max(maximumTime,
 					tmpGForceData.getSampleDateInMillis());
 		}
-		// if the spread in data is less then 100 miliseconds then just return
+		// if the spread in data is less then 500 miliseconds then just return
 		// and dont do anything
-		if (Math.abs(maximumTime - minimumTime) < 100) {
+		if (Math.abs(maximumTime - minimumTime) < 500) {
 			return null;
 		}
-		retGForceData = GForceData.averageData(runningGForceDataAverageList);
+		retGForceData = GForceData.maximumData(shortTermGForceDataList);
 		return retGForceData;
 	}
 
-	public int getPointsInRunningAverageBuffer() {
-		return runningGForceDataAverageList.size();
+	public List<GForceData> getShortTermGForceDataList() {
+		return shortTermGForceDataList;
 	}
 
-	public void clearPointsInRunningAverageBuffer() {
-		runningGForceDataAverageList.clear();
+	public void setShortTermGForceDataList(List<GForceData> shortTermGForceDataList) {
+		this.shortTermGForceDataList = shortTermGForceDataList;
 	}
+
 }

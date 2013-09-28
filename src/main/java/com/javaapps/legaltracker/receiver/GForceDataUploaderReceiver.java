@@ -2,7 +2,6 @@ package com.javaapps.legaltracker.receiver;
 
 import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
-import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.Monitor;
@@ -27,6 +26,7 @@ public class GForceDataUploaderReceiver extends BroadcastReceiver {
 				Log.i(Constants.LEGAL_TRACKER_TAG,
 						"cannot upload gforce data because wifi is not enabled");
 				Monitor.getInstance().setWifiStatus("wifi not enabled");
+				Monitor.getInstance().setLastGForceUploadStatusCode(Constants.WIFI_NOT_ENABLED);
 				return;
 			}
 			Monitor.getInstance().setWifiStatus("pinging wifi connection");
@@ -34,18 +34,10 @@ public class GForceDataUploaderReceiver extends BroadcastReceiver {
 				Log.i(Constants.LEGAL_TRACKER_TAG,
 						"cannot upload gforce data because could not could to wifi");
 				Monitor.getInstance().setWifiStatus("could not ping backend server");
+				Monitor.getInstance().setLastGForceUploadStatusCode(Constants.COULD_NOT_GET_WIFI_CONNECTION);
 				return;
-
 			}
 			Monitor.getInstance().setWifiStatus("Wifi OK");
-			LegalTrackerFile legalTrackerFile = LegalTrackerFileFactory
-					.getLegalTrackerFile(
-							FileType.GForce.getPrefix(),
-							FileType.GForce.getExtension());
-			if (legalTrackerFile.isEmpty()){
-				return;
-			}
-			legalTrackerFile.closeOutObjectFile();
 			GForceDataUploaderHandler gforceDataUploaderHandler=new GForceDataUploaderHandler(Config.getInstance().getFilesDir(),FileType.GForce.getPrefix()+"_archive_");
 			gforceDataUploaderHandler.uploadData();
 			Log.i(Constants.LEGAL_TRACKER_TAG, "uploaded gforce file");

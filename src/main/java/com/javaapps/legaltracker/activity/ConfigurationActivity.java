@@ -1,19 +1,5 @@
 package com.javaapps.legaltracker.activity;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-
-import com.javaapps.legaltracker.R;
-import com.javaapps.legaltracker.R.id;
-import com.javaapps.legaltracker.R.layout;
-import com.javaapps.legaltracker.R.menu;
-import com.javaapps.legaltracker.io.FileType;
-import com.javaapps.legaltracker.io.LegalTrackerFile;
-import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
-import com.javaapps.legaltracker.pojos.Config;
-import com.javaapps.legaltracker.pojos.Constants;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +10,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.javaapps.legaltracker.R;
+import com.javaapps.legaltracker.io.FileType;
+import com.javaapps.legaltracker.io.LegalTrackerFile;
+import com.javaapps.legaltracker.pojos.Config;
+import com.javaapps.legaltracker.pojos.Constants;
 
 public class ConfigurationActivity extends Activity {
 
@@ -71,7 +63,7 @@ public class ConfigurationActivity extends Activity {
 		public void onClick(View arg0) {
 			LegalTrackerFile legalTrackerFile;
 			try {
-				legalTrackerFile = LegalTrackerFileFactory.getLegalTrackerFile(
+				legalTrackerFile = new LegalTrackerFile(
 						FileType.Location.getPrefix(),
 						FileType.Location.getExtension());
 				legalTrackerFile.deleteFiles();

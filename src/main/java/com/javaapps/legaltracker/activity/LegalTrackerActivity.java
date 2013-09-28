@@ -31,14 +31,13 @@ public class LegalTrackerActivity extends Activity {
 		Intent i = new Intent();
 		i.setAction("kickOffLogger");
 		this.sendBroadcast(i);
-		updateUI();
 		Button refreshMonitorButton = (Button) this
 				.findViewById(R.id.RefreshMonitor);
 		refreshMonitorButton.setOnClickListener(new RefreshMonitorListener());
 		Button resetMonitorButton = (Button) this
 				.findViewById(R.id.ResetMonitor);
 		resetMonitorButton.setOnClickListener(new ResetMonitorListener());
-
+        this.updateUI();
 		Log.i(Constants.LEGAL_TRACKER_TAG, "activity kicked off");
 	}
 

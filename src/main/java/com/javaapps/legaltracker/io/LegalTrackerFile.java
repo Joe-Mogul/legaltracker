@@ -24,20 +24,16 @@ public class LegalTrackerFile<T> {
 	public final static String ARCHIVE_STRING="_archive_";
 	
 	private final ReentrantLock lock = new ReentrantLock();
-   
-	private ObjectOutputStream objectOutputStream;
-
+  
 	private File filesDir;
 	private String prefix;
 	private String extension;
-	private java.text.DateFormat dateFormat=new SimpleDateFormat("yyyyMMddHHmmss");
 	
 	public LegalTrackerFile(String prefix,String extension)
 			throws FileNotFoundException, IOException {
 		this.filesDir =Config.getInstance().getFilesDir();
 		this.prefix =prefix;
 		this.extension=extension;
-		openLocationDataFileForWrite();
 	}
 
 	public void deleteFiles(){
@@ -55,7 +51,10 @@ public class LegalTrackerFile<T> {
 		if (!isNotLocked) {
 			return objectList;
 		}
+		ObjectOutputStream objectOutputStream =null;
 		try {
+			File file = new File(filesDir, getActiveFileName());
+			objectOutputStream = new ObjectOutputStream(new FileOutputStream(file,true));
 			boolean errorThrown = false;
 			for (T object : objectList) {
 				try {
@@ -75,44 +74,30 @@ public class LegalTrackerFile<T> {
 		} finally {
 			if (objectOutputStream != null) {
 				objectOutputStream.flush();
+				objectOutputStream.close();
 			}
 			File file = new File(filesDir,getActiveFileName());
+			long fileSize=file.length();
 			if (file.getName().startsWith("location")){
-				Monitor.getInstance().setCurrentFileSize(file.length());
+				Monitor.getInstance().setCurrentFileSize(fileSize);
 			}else{
-				Monitor.getInstance().setGforceFileSize(file.length());
+				Monitor.getInstance().setGforceFileSize(fileSize);
 			}
-		
+			if ( fileSize > 10000){
+				if ( file.renameTo(new File(filesDir,getArchiveFileName())))
+				{
+					Log.i(Constants.LEGAL_TRACKER_TAG,prefix+" file successfully archived");
+				}else
+				{
+					Log.e(Constants.LEGAL_TRACKER_TAG,prefix+" file could not be archived");
+				}
+			}
 			lock.unlock();
 		}
 		return (retList);
 	}
 
-	public void closeOutObjectFile() {
-		boolean isNotLocked = lock.tryLock();
-		// If it is locked then just return the list and try to save it another
-		// time
-		if (!isNotLocked) {
-			return;
-		}
-		Log.i(Constants.LEGAL_TRACKER_TAG, "moving data file to buffer");
-		try {
-			objectOutputStream.flush();
-			objectOutputStream.close();
-			File file = new File(filesDir,getActiveFileName());
-			File newFile=new File(filesDir, getArchiveFileName());
-			file.renameTo(newFile);
-			Monitor.getInstance().setCurrentFileSize(0);
-		} catch (Exception ex) {
-			Log.e(Constants.LEGAL_TRACKER_TAG,
-					"unable move data file because "
-							+ ex.getMessage());
-		} finally {
-			openLocationDataFileForWrite();
-			lock.unlock();
-		}
-		return;
-	}
+
 
 	private String getActiveFileName(){
 		return prefix+"."+extension;
@@ -124,38 +109,6 @@ public class LegalTrackerFile<T> {
 		return prefix+ARCHIVE_STRING+dateFormat.format(new Date())+"."+extension;
 	}
 	
-	private void openLocationDataFileForWrite() {
-		try {
-			String fileName=getActiveFileName();
-			File file = new File(filesDir, fileName);
-			if ( !file.canWrite()){
-				file.setWritable(false, true);
-			}
-			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-					file));
-			//setFileAccess(file);
-		} catch (Exception ex) {
-			String errorStr="unable to open location data file because "
-					+ ex.getMessage();
-			Monitor.getInstance().setStatus(errorStr);
-			Log.e(Constants.LEGAL_TRACKER_TAG,errorStr );
-		}
-	}
-
-	private void setFileAccess(File file) {
-		try {
-			Runtime.getRuntime().exec("chmod 777 "+file.getAbsolutePath());
-		} catch (IOException e) {
-			Log.e(Constants.LEGAL_TRACKER_TAG,"Could not change permissions to file "+file.getAbsolutePath());
-		}
-	}
-
-	public boolean isEmpty() {
-		String fileName=getActiveFileName();
-		File file = new File(filesDir, fileName);
-		//object files are not 0 length when opened
-		return (file.length()<5);
-	}
 
 	
 	

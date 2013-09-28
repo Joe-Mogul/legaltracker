@@ -2,7 +2,6 @@ package com.javaapps.legaltracker.receiver;
 
 import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
-import com.javaapps.legaltracker.io.LegalTrackerFileFactory;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.Monitor;
@@ -27,6 +26,7 @@ public class LocationDataUploaderReceiver extends BroadcastReceiver {
 				Log.i(Constants.LEGAL_TRACKER_TAG,
 						"cannot upload location data because wifi is not enabled");
 				Monitor.getInstance().setWifiStatus("wifi not enabled");
+				Monitor.getInstance().setLastUploadStatusCode(Constants.WIFI_NOT_ENABLED);
 				return;
 			}
 			Monitor.getInstance().setWifiStatus("pinging wifi connection");
@@ -34,18 +34,11 @@ public class LocationDataUploaderReceiver extends BroadcastReceiver {
 				Log.i(Constants.LEGAL_TRACKER_TAG,
 						"cannot upload location data because could not could to wifi");
 				Monitor.getInstance().setWifiStatus("could not ping backend server");
+				Monitor.getInstance().setLastUploadStatusCode(Constants.COULD_NOT_GET_WIFI_CONNECTION);
 				return;
 
 			}
 			Monitor.getInstance().setWifiStatus("Wifi OK");
-			LegalTrackerFile legalTrackerFile = LegalTrackerFileFactory
-					.getLegalTrackerFile(
-							FileType.Location.getPrefix(),
-							FileType.Location.getExtension());
-			if (legalTrackerFile.isEmpty()){
-				return;
-			}
-			legalTrackerFile.closeOutObjectFile();
 			LocationDataUploaderHandler locationDataUploaderHandler=new LocationDataUploaderHandler(Config.getInstance().getFilesDir(),FileType.Location.getPrefix()+"_archive_");
 			locationDataUploaderHandler.uploadData();
 			Log.i(Constants.LEGAL_TRACKER_TAG, "uploaded file");

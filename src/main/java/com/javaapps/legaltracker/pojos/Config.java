@@ -12,13 +12,13 @@ public class Config {
 
 	private int testStatusCode = 200;
 
-	private int gforceUploadPeriod = 75000;
+	private int gforceUploadPeriod = 1100000;
 
-	private int gforceUploadDelay = 75000;
+	private int gforceUploadDelay = 1100000;
 
-	private int locationUploadPeriod = 60000;
+	private int locationUploadPeriod = 1300000;
 
-	private int locationUploadDelay = 60000;
+	private int locationUploadDelay = 1300000;
 
 	private long minimumLoggingIntervals = 400;
 	
@@ -26,7 +26,7 @@ public class Config {
 	
 	private int gforceListenerBufferSize=100;
 
-	private long httpTimeout = 10000;
+	private long httpTimeout = 1000;
 
 	private int uploadBatchSize = 1000;
 	
