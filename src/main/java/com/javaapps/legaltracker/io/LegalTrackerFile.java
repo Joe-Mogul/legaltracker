@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.javaapps.legaltracker.interfaces.CsvWriter;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.Monitor;
@@ -53,22 +54,21 @@ public class LegalTrackerFile<T> {
 			return objectList;
 		}
 		File file = new File(filesDir, getActiveFileName());
-		if (file.exists() && file.renameTo(new File(filesDir, getArchiveFileName()))) {
+		if (file.exists()&& file.length() > 10000 && file.renameTo(new File(filesDir, getArchiveFileName()))) {
 			Log.i(Constants.LEGAL_TRACKER_TAG, prefix
 					+ " file successfully archived");
 		} 
-		ObjectOutputStream objectOutputStream = null;
+		file = new File(filesDir, getActiveFileName());
+		FileOutputStream fileOutputStream = null;
 		try {
-			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-					file));
-			objectOutputStream.reset();
+			fileOutputStream = new FileOutputStream(file,true);
 			boolean errorThrown = false;
 			for (T object : objectList) {
 				try {
 					if (errorThrown) {
 						retList.add(object);
 					} else {
-						objectOutputStream.writeObject(object);
+						fileOutputStream.write(((CsvWriter)object).toCSV().getBytes());
 					}
 				} catch (Exception ex) {
 					errorThrown = true;
@@ -78,9 +78,9 @@ public class LegalTrackerFile<T> {
 				}
 			}
 		} finally {
-			if (objectOutputStream != null) {
-				objectOutputStream.flush();
-				objectOutputStream.close();
+			if (fileOutputStream != null) {
+				fileOutputStream.flush();
+				fileOutputStream.close();
 			}
 			if (file.getName().startsWith("location")) {
 				Monitor.getInstance().setCurrentFileSize(file.length());

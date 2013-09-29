@@ -1,18 +1,15 @@
 package com.javaapps.legaltracker.upload;
 
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -76,14 +73,14 @@ public class GForceDataUploaderHandler {
 			FileResultMapsWrapper.getInstance().getFileResultMaps()
 					.put(fileName, fileResultMap);
 		}
-		ObjectInputStream objectInputStream = null;
+		DataInputStream inputStream = null;
 		try {
-			objectInputStream = new ObjectInputStream(new FileInputStream(file));
+			inputStream = new DataInputStream(new FileInputStream(file));
 			int bufferCounter = 0;
 			int objectCounter = 0;
 			int batchSize = Config.getInstance().getUploadBatchSize();
 			try {
-				while ((objectInputStream.readObject()) != null) {
+				while ((inputStream.readLine()) != null) {
 					objectCounter++;
 					if (objectCounter >= batchSize) {
 						bufferCounter++;
@@ -100,22 +97,22 @@ public class GForceDataUploaderHandler {
 			}
 			return (fileResultMap);
 		} finally {
-			closeInputStream(objectInputStream);
+			closeInputStream(inputStream);
 
 		}
 	}
 
 	private void loadFile(File file) {
-		ObjectInputStream objectInputStream = null;
+		DataInputStream inputStream = null;
 		try {
 			FileResultMap fileResultMap = getResultMap(file);
-			objectInputStream = new ObjectInputStream(new FileInputStream(file));
+			inputStream = new DataInputStream(new FileInputStream(file));
 			List<GForceData> gforceDataList = new ArrayList<GForceData>();
 			int index = 0;
 			try {
-				Object object = null;
-				while ((object = objectInputStream.readObject()) != null) {
-					GForceData gforceData = (GForceData) object;
+				String csvString = null;
+				while ((csvString = inputStream.readLine()) != null) {
+					GForceData gforceData =  new GForceData(csvString);
 					gforceDataList.add(gforceData);
 					if (gforceDataList.size() > Config.getInstance()
 							.getUploadBatchSize()) {
@@ -136,7 +133,7 @@ public class GForceDataUploaderHandler {
 					"unable to open gforce data file because "
 							+ ex.getMessage());
 		} finally {
-			closeInputStream(objectInputStream);
+			closeInputStream(inputStream);
 		}
 
 	}

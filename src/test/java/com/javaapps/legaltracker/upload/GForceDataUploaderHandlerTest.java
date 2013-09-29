@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,6 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.javaapps.legaltracker.interfaces.CsvWriter;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.GForceData;
@@ -66,19 +68,19 @@ public class GForceDataUploaderHandlerTest {
 
 
 
-	private void createGForceObjectFile(FileResult fileResult,int numberOfSamples,int timeDelta)
+	private void createGForceCSVFile(FileResult fileResult,int numberOfSamples,int timeDelta)
 			throws FileNotFoundException, IOException {
 		if (fileResult.file.exists()) {
 			fileResult.file.delete();
 		}
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-				fileResult.file));
+		FileOutputStream fos = new FileOutputStream(
+				fileResult.file);
 		for (int ii = 0; ii < numberOfSamples; ii=ii+timeDelta) {
-			GForceData gforceData = new GForceData(1,2,3,systemTimeInMillis+ii);
-			oos.writeObject(gforceData);
+			CsvWriter gforceData = new GForceData(1,2,3,systemTimeInMillis+ii);
+			fos.write(gforceData.toCSV().getBytes());
 		}
-		oos.flush();
-		oos.close();
+		fos.flush();
+		fos.close();
 	}
 	@Before
 	public void setup() {
@@ -112,7 +114,7 @@ public class GForceDataUploaderHandlerTest {
 	public void uploadDataResultMapSizeTest() throws ClientProtocolException,
 			IOException {
 		FileResult fileResult = new FileResult("unittest", -1,false);
-		createGForceObjectFile(fileResult,100,1);
+		createGForceCSVFile(fileResult,100,1);
 		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
 		gforceDataUploaderHandler
@@ -135,7 +137,7 @@ public class GForceDataUploaderHandlerTest {
 	public void uploadDataResultMapWithBadStatusTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 400,false);
-		createGForceObjectFile(fileResult,100,1);
+		createGForceCSVFile(fileResult,100,1);
 		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
 		gforceDataUploaderHandler
@@ -155,7 +157,7 @@ public class GForceDataUploaderHandlerTest {
 		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
 		for (FileResult fileResult : fileResultList) {
-			createGForceObjectFile(fileResult,100,1);
+			createGForceCSVFile(fileResult,100,1);
 		}
 
 		for (FileResult fileResult : fileResultList) {
@@ -181,7 +183,7 @@ public class GForceDataUploaderHandlerTest {
 	public void uploadDataResultMapWithGoodStatusLastTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 200,true);
-		createGForceObjectFile(fileResult,100,1);
+		createGForceCSVFile(fileResult,100,1);
 		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
 		gforceDataUploaderHandler
@@ -196,7 +198,7 @@ public class GForceDataUploaderHandlerTest {
 	public void uploadDataWithGForceDataTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 200,true);
-		createGForceObjectFile(fileResult,100,1);
+		createGForceCSVFile(fileResult,100,1);
 		GForceDataUploaderHandler gforceDataUploaderHandler = new GForceDataUploaderHandler(
 				testFileDir, "unittest");
 		gforceDataUploaderHandler

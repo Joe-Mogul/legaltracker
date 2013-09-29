@@ -1,5 +1,7 @@
 package com.javaapps.legaltracker.upload;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,14 +73,14 @@ public class LocationDataUploaderHandler {
 			FileResultMapsWrapper.getInstance().getFileResultMaps()
 					.put(fileName, fileResultMap);
 		}
-		ObjectInputStream objectInputStream = null;
+		DataInputStream inputStream = null;
 		try {
-			objectInputStream = new ObjectInputStream(new FileInputStream(file));
+			inputStream = new DataInputStream(new FileInputStream(file));
 			int bufferCounter = 0;
 			int objectCounter = 0;
 			int batchSize = Config.getInstance().getUploadBatchSize();
 			try {
-				while ((objectInputStream.readObject()) != null) {
+				while ((inputStream.readLine()) != null) {
 					objectCounter++;
 					if (objectCounter >= batchSize) {
 						bufferCounter++;
@@ -95,22 +97,23 @@ public class LocationDataUploaderHandler {
 			}
 			return (fileResultMap);
 		} finally {
-			closeInputStream(objectInputStream);
+			closeInputStream(inputStream);
 
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void loadFile(File file) {
-		ObjectInputStream objectInputStream = null;
+		DataInputStream inputStream = null;
 		try {
 			FileResultMap fileResultMap = getResultMap(file);
-			objectInputStream = new ObjectInputStream(new FileInputStream(file));
+			inputStream = new DataInputStream(new FileInputStream(file));
 			List<LegalTrackerLocation> batchLocationDataList = new ArrayList<LegalTrackerLocation>();
 			int index = 0;
 			try {
-				Object object = null;
-				while ((object = objectInputStream.readObject()) != null) {
-					LegalTrackerLocation legalTrackerLocation = (LegalTrackerLocation) object;
+				String csvLine = null;
+				while ((csvLine = inputStream.readLine()) != null) {
+					LegalTrackerLocation legalTrackerLocation = new LegalTrackerLocation(csvLine);
 					batchLocationDataList.add(legalTrackerLocation);
 					if (batchLocationDataList.size() > Config.getInstance()
 							.getUploadBatchSize()) {
@@ -131,7 +134,7 @@ public class LocationDataUploaderHandler {
 					"unable to open location data file because "
 							+ ex.getMessage());
 		} finally {
-			closeInputStream(objectInputStream);
+			closeInputStream(inputStream);
 		}
 
 	}

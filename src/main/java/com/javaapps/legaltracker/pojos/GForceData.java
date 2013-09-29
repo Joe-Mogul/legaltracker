@@ -3,7 +3,9 @@ package com.javaapps.legaltracker.pojos;
 import java.io.Serializable;
 import java.util.List;
 
-public class GForceData implements Serializable {
+import com.javaapps.legaltracker.interfaces.CsvWriter;
+
+public class GForceData implements Serializable, CsvWriter {
 
 	private static final long serialVersionUID = 1L;
 	private long sampleDateInMillis;
@@ -18,6 +20,17 @@ public class GForceData implements Serializable {
 
 	public GForceData() {
 
+	}
+
+	public GForceData(String csvString) {
+      String props[]=csvString.split("\\,");
+      if (props.length < 4){
+    	  return;
+      }
+      this.sampleDateInMillis=Long.parseLong(props[0]);
+      this.x=Float.parseFloat(props[1]);
+      this.y=Float.parseFloat(props[2]);
+      this.z=Float.parseFloat(props[3]);
 	}
 
 	public GForceData(float x, float y, float z, long sampleDateInMillis) {
@@ -67,14 +80,13 @@ public class GForceData implements Serializable {
 
 	public static GForceData maximumData(List<GForceData> gforceDataList) {
 		GForceData retGForceData = null;
-		double maximumGForce=0.0;
+		double maximumGForce = 0.0;
 		if (gforceDataList != null && gforceDataList.size() > 0) {
 			for (GForceData gforceData : gforceDataList) {
-                   if (gforceData.getGforce()>maximumGForce)
-                   {
-                	   maximumGForce=gforceData.getGforce();
-                	   retGForceData =gforceData;
-                   }
+				if (gforceData.getGforce() > maximumGForce) {
+					maximumGForce = gforceData.getGforce();
+					retGForceData = gforceData;
+				}
 			}
 		}
 		return retGForceData;
@@ -105,6 +117,14 @@ public class GForceData implements Serializable {
 			retGForceData.sampleDateInMillis = (minimumTime + maximumTime) / 2;
 		}
 		return retGForceData;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.javaapps.legaltracker.pojos.CsvWriter#toCSV()
+	 */
+	@Override
+	public String toCSV() {
+		return sampleDateInMillis + "," +x+ "," + y + "," + z + "\n";
 	}
 
 	public boolean isEqual(GForceData lastGForceData) {

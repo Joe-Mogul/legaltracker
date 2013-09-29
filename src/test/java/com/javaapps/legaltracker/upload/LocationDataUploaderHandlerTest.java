@@ -65,20 +65,20 @@ public class LocationDataUploaderHandlerTest {
 		FileResultMapsWrapper.getInstance().getFileResultMaps().clear();
 	}
 
-	private void createLocationObjectFile(FileResult fileResult,int numberOfSamples,int timeDelta)
+	private void createLocationCSVFile(FileResult fileResult,int numberOfSamples,int timeDelta)
 			throws FileNotFoundException, IOException {
 		if (fileResult.file.exists()) {
 			fileResult.file.delete();
 		}
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-				fileResult.file));
+		FileOutputStream fos = new FileOutputStream(
+				fileResult.file);
 		for (int ii = 0; ii < numberOfSamples; ii=ii+timeDelta) {
 			LegalTrackerLocation location = new LegalTrackerLocation(40.0,
 					-80.0, 10.f, 20.0f, 10.0f, systemTimeInMillis+ii);
-			oos.writeObject(location);
+			fos.write(location.toCSV().getBytes());
 		}
-		oos.flush();
-		oos.close();
+		fos.flush();
+		fos.close();
 	}
 
 		@Before
@@ -113,7 +113,7 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapSizeTest() throws ClientProtocolException,
 			IOException {
 		FileResult fileResult = new FileResult("unittest", -1,false);
-		createLocationObjectFile(fileResult,100,1);
+		createLocationCSVFile(fileResult,100,1);
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
 				testFileDir, "unittest");
 		locationDataUploaderHandler
@@ -136,7 +136,7 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapWithBadStatusTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 400,false);
-		createLocationObjectFile(fileResult,100,1);
+		createLocationCSVFile(fileResult,100,1);
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
 				testFileDir, "unittest");
 		locationDataUploaderHandler
@@ -156,7 +156,7 @@ public class LocationDataUploaderHandlerTest {
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
 				testFileDir, "unittest");
 		for (FileResult fileResult : fileResultList) {
-			createLocationObjectFile(fileResult,100,1);
+			createLocationCSVFile(fileResult,100,1);
 		}
 
 		for (FileResult fileResult : fileResultList) {
@@ -182,7 +182,7 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapWithGoodStatusLastTest()
 			throws ClientProtocolException, IOException {
 		FileResult fileResult = new FileResult("unittest", 200,true);
-		createLocationObjectFile(fileResult,100,1);
+		createLocationCSVFile(fileResult,100,1);
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
 				testFileDir, "unittest");
 		locationDataUploaderHandler

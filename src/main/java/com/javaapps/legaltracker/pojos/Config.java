@@ -22,9 +22,9 @@ public class Config {
 
 	private long minimumLoggingIntervals = 400;
 	
-	private int locationListenerBufferSize=400;
+	private int locationListenerBufferSize=100;
 	
-	private int gforceListenerBufferSize=400;
+	private int gforceListenerBufferSize=100;
 
 	private long httpTimeout = 4000;
 

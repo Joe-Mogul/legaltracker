@@ -10,9 +10,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.javaapps.legaltracker.interfaces.CsvWriter;
+
 public class GForceDataTest {
 
-	private GForceData gforceData;
+	private CsvWriter gforceData;
 	
 	@Before 
 	public void setup()
