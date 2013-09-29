@@ -55,15 +55,16 @@ public class GForceDataUploaderHandler {
 	 */
 	public void uploadData() {
 		for (File file : this.filesDir.listFiles()) {
-			Log.i(Constants.LEGAL_TRACKER_TAG,"reading legal tracker directory");
-			if (file.getName().startsWith(filePrefix+LegalTrackerFile.ARCHIVE_STRING)) {
-				Log.i(Constants.LEGAL_TRACKER_TAG,"uploading file "+file.getName());
+			Log.i(Constants.LEGAL_TRACKER_TAG,
+					"reading legal tracker directory");
+			if (file.getName().startsWith(
+					filePrefix + LegalTrackerFile.ARCHIVE_STRING)) {
+				Log.i(Constants.LEGAL_TRACKER_TAG,
+						"uploading file " + file.getName());
 				loadFile(file);
 			}
 		}
 	}
-
-
 
 	private FileResultMap getResultMap(File file) throws FileNotFoundException,
 			IOException, ClassNotFoundException {
@@ -158,9 +159,10 @@ public class GForceDataUploaderHandler {
 		boolean retValue = true;
 		Monitor.getInstance().incrementTotalGForcePointsUploaded(
 				gforceDataList.size());
-		//upload timestamp will be the first date in the list
-		GForceDataUpload gforceDataUpload = new GForceDataUpload(Config.getInstance().getDeviceId(),
-				new Date(gforceDataList.get(0).getSampleDateInMillis()), gforceDataList);
+		// upload timestamp will be the first date in the list
+		GForceDataUpload gforceDataUpload = new GForceDataUpload(Config
+				.getInstance().getDeviceId(), new Date(gforceDataList.get(0)
+				.getSampleDateInMillis()), gforceDataList);
 		try {
 			Monitor.getInstance().setLastGForceUploadDate(new Date());
 			String jsonStr = gforceDataUpload.toJsonString();
@@ -206,23 +208,27 @@ public class GForceDataUploaderHandler {
 					int statusCode = response.getStatusLine().getStatusCode();
 					fileResultMap.getResultMap().put(index, statusCode);
 					if (statusCode / 100 == 2) {
-						Monitor.getInstance().incrementTotalGForcePointsProcessed(
-								batchSize);
-						if (fileResultMap.allBatchesUploaded()){
-							File file=new File(fileResultMap.getFileName());
-							if ( ! file.delete()){
-								Log.i(Constants.LEGAL_TRACKER_TAG,"Could not delete "+file.getAbsolutePath());
+						Monitor.getInstance()
+								.incrementTotalGForcePointsProcessed(batchSize);
+						if (fileResultMap.allBatchesUploaded()) {
+							File file = new File(fileResultMap.getFileName());
+							if (!file.delete()) {
+								Log.i(Constants.LEGAL_TRACKER_TAG,
+										"Could not delete "
+												+ file.getAbsolutePath());
 							}
 						}
 					} else {
-						Monitor.getInstance().incrementTotalGForcePointsNotProcessed(
-								batchSize);
+						Monitor.getInstance()
+								.incrementTotalGForcePointsNotProcessed(
+										batchSize);
 					}
-					Monitor.getInstance().setLastGForceUploadStatusCode(statusCode);
+					Monitor.getInstance().setLastGForceUploadStatusCode(
+							statusCode);
 				} catch (Exception e) {
 					Monitor.getInstance().setLastGForceUploadStatusCode(-99);
-					Monitor.getInstance()
-							.setLastGForceConnectionError(e.getMessage());
+					Monitor.getInstance().setLastGForceConnectionError(
+							e.getMessage());
 					Log.e(Constants.LEGAL_TRACKER_TAG,
 							"cannot  upload data to server because because"
 									+ e.getMessage());

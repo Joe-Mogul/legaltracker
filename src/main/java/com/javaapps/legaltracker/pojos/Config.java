@@ -16,15 +16,15 @@ public class Config {
 
 	private int gforceUploadDelay = 1100000;
 
-	private int locationUploadPeriod = 130000;
+	private int locationUploadPeriod = 1300000;
 
-	private int locationUploadDelay = 130000;
+	private int locationUploadDelay = 1300000;
 
 	private long minimumLoggingIntervals = 400;
 	
-	private int locationListenerBufferSize=100;
+	private int locationListenerBufferSize=400;
 	
-	private int gforceListenerBufferSize=100;
+	private int gforceListenerBufferSize=400;
 
 	private long httpTimeout = 4000;
 

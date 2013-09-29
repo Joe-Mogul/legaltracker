@@ -21,28 +21,29 @@ import android.util.Log;
 
 public class LegalTrackerFile<T> {
 
-	public final static String ARCHIVE_STRING="_archive_";
-	
+	public final static String ARCHIVE_STRING = "_archive_";
+
 	private final ReentrantLock lock = new ReentrantLock();
-  
+
 	private File filesDir;
 	private String prefix;
 	private String extension;
-	
-	public LegalTrackerFile(String prefix,String extension)
+
+	public LegalTrackerFile(String prefix, String extension)
 			throws FileNotFoundException, IOException {
-		this.filesDir =Config.getInstance().getFilesDir();
-		this.prefix =prefix;
-		this.extension=extension;
+		this.filesDir = Config.getInstance().getFilesDir();
+		this.prefix = prefix;
+		this.extension = extension;
 	}
 
-	public void deleteFiles(){
-		for (File file:filesDir.listFiles()){
-			if (file.getName().startsWith(prefix+ARCHIVE_STRING)){
+	public void deleteFiles() {
+		for (File file : filesDir.listFiles()) {
+			if (file.getName().startsWith(prefix + ARCHIVE_STRING)) {
 				file.delete();
 			}
 		}
 	}
+
 	public List<T> writeToObjectFile(List<T> objectList) throws IOException {
 		List<T> retList = new ArrayList<T>();
 		boolean isNotLocked = lock.tryLock();
@@ -51,10 +52,19 @@ public class LegalTrackerFile<T> {
 		if (!isNotLocked) {
 			return objectList;
 		}
-		ObjectOutputStream objectOutputStream =null;
+		File file = new File(filesDir, getActiveFileName());
+		if (file.exists() && file.renameTo(new File(filesDir, getArchiveFileName()))) {
+			Log.i(Constants.LEGAL_TRACKER_TAG, prefix
+					+ " file successfully archived");
+		} else {
+			Log.e(Constants.LEGAL_TRACKER_TAG, prefix
+					+ " file could not be archived");
+		}
+		ObjectOutputStream objectOutputStream = null;
 		try {
-			File file = new File(filesDir, getActiveFileName());
-			objectOutputStream = new ObjectOutputStream(new FileOutputStream(file,true));
+			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
+					file, true));
+			objectOutputStream.reset();
 			boolean errorThrown = false;
 			for (T object : objectList) {
 				try {
@@ -65,9 +75,8 @@ public class LegalTrackerFile<T> {
 					}
 				} catch (Exception ex) {
 					errorThrown = true;
-					Log.e(Constants.LEGAL_TRACKER_TAG,
-							"cannot save location buffer because "
-									+ ex.getMessage());
+					Log.e(Constants.LEGAL_TRACKER_TAG, "cannot save " + prefix
+							+ " buffer because " + ex.getMessage());
 					retList.add(object);
 				}
 			}
@@ -76,21 +85,10 @@ public class LegalTrackerFile<T> {
 				objectOutputStream.flush();
 				objectOutputStream.close();
 			}
-			File file = new File(filesDir,getActiveFileName());
-			long fileSize=file.length();
-			if (file.getName().startsWith("location")){
-				Monitor.getInstance().setCurrentFileSize(fileSize);
-			}else{
-				Monitor.getInstance().setGforceFileSize(fileSize);
-			}
-			if ( fileSize > 10000){
-				if ( file.renameTo(new File(filesDir,getArchiveFileName())))
-				{
-					Log.i(Constants.LEGAL_TRACKER_TAG,prefix+" file successfully archived");
-				}else
-				{
-					Log.e(Constants.LEGAL_TRACKER_TAG,prefix+" file could not be archived");
-				}
+			if (file.getName().startsWith("location")) {
+				Monitor.getInstance().setCurrentFileSize(file.length());
+			} else {
+				Monitor.getInstance().setGforceFileSize(file.length());
 			}
 			setArchiveFileNamesOnMonitor();
 			lock.unlock();
@@ -98,28 +96,24 @@ public class LegalTrackerFile<T> {
 		return (retList);
 	}
 
-
-
-	private String getActiveFileName(){
-		return prefix+"."+extension;
+	private String getActiveFileName() {
+		return prefix + "." + extension;
 	}
-	
-	private String getArchiveFileName()
-	{
-		DateFormat dateFormat=new SimpleDateFormat("yyyyMMddHHmmss");
-		return prefix+ARCHIVE_STRING+dateFormat.format(new Date())+"."+extension;
-	}
-	
 
-	private void setArchiveFileNamesOnMonitor()
-	{
-		StringBuilder sb=new StringBuilder();
-		for ( File file:filesDir.listFiles()){
-			if ( file.getName().contains(ARCHIVE_STRING)){
-				sb.append(file.getName()+" "+file.length()+"\n");
+	private String getArchiveFileName() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		return prefix + ARCHIVE_STRING + dateFormat.format(new Date()) + "."
+				+ extension;
+	}
+
+	private void setArchiveFileNamesOnMonitor() {
+		StringBuilder sb = new StringBuilder();
+		for (File file : filesDir.listFiles()) {
+			if (file.getName().contains(ARCHIVE_STRING)) {
+				sb.append(file.getName() + " " + file.length() + "\n");
 			}
 		}
 		Monitor.getInstance().setArchiveFiles(sb.toString());
 	}
-	
+
 }
