@@ -92,6 +92,7 @@ public class LegalTrackerFile<T> {
 					Log.e(Constants.LEGAL_TRACKER_TAG,prefix+" file could not be archived");
 				}
 			}
+			setArchiveFileNamesOnMonitor();
 			lock.unlock();
 		}
 		return (retList);
@@ -110,6 +111,15 @@ public class LegalTrackerFile<T> {
 	}
 	
 
-	
+	private void setArchiveFileNamesOnMonitor()
+	{
+		StringBuilder sb=new StringBuilder();
+		for ( File file:filesDir.listFiles()){
+			if ( file.getName().contains(ARCHIVE_STRING)){
+				sb.append(file.getName()+" "+file.length()+"\n");
+			}
+		}
+		Monitor.getInstance().setArchiveFiles(sb.toString());
+	}
 	
 }

@@ -23,6 +23,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.util.Log;
 
+import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.GForceData;
@@ -53,15 +54,11 @@ public class GForceDataUploaderHandler {
 	 * .List)
 	 */
 	public void uploadData() {
-		StringBuilder sb = new StringBuilder();
 		for (File file : this.filesDir.listFiles()) {
-			String fileName = file.getName();
-			if (file.getName().startsWith(filePrefix)) {
-				sb.append(fileName + " " + file.length() + "\n");
+			if (file.getName().startsWith(filePrefix+LegalTrackerFile.ARCHIVE_STRING)) {
 				loadFile(file);
 			}
 		}
-		Monitor.getInstance().setArchiveFiles(sb.toString());
 	}
 
 

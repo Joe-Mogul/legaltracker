@@ -23,6 +23,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.util.Log;
 
+import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
@@ -53,18 +54,12 @@ public class LocationDataUploaderHandler {
 	 * .List)
 	 */
 	public void uploadData() {
-		StringBuilder sb = new StringBuilder();
 		for (File file : this.filesDir.listFiles()) {
-			String fileName = file.getName();
-			if (file.getName().startsWith(filePrefix)) {
-				sb.append(fileName + " " + file.length() + "\n");
+			if (file.getName().startsWith(filePrefix+LegalTrackerFile.ARCHIVE_STRING)) {
 				loadFile(file);
 			}
 		}
-		Monitor.getInstance().setArchiveFiles(sb.toString());
 	}
-
-
 
 	private FileResultMap getResultMap(File file) throws FileNotFoundException,
 			IOException, ClassNotFoundException {
@@ -159,8 +154,9 @@ public class LocationDataUploaderHandler {
 		boolean retValue = true;
 		Monitor.getInstance().incrementTotalPointsUploaded(
 				locationDataList.size());
-		//upload timestamp will be the first date in the list
-		LocationDataUpload locationDataUpload = new LocationDataUpload(Config.getInstance().getDeviceId(),
+		// upload timestamp will be the first date in the list
+		LocationDataUpload locationDataUpload = new LocationDataUpload(Config
+				.getInstance().getDeviceId(),
 				locationDataList.get(0).getDate(), locationDataList);
 		try {
 			Monitor.getInstance().setLastUploadDate(new Date());
@@ -210,10 +206,12 @@ public class LocationDataUploaderHandler {
 					if (statusCode / 100 == 2) {
 						Monitor.getInstance().incrementTotalPointsProcessed(
 								batchSize);
-						if (fileResultMap.allBatchesUploaded()){
-							File file=new File(fileResultMap.getFileName());
-							if ( ! file.delete()){
-								Log.i(Constants.LEGAL_TRACKER_TAG,"Could not delete "+file.getAbsolutePath());
+						if (fileResultMap.allBatchesUploaded()) {
+							File file = new File(fileResultMap.getFileName());
+							if (!file.delete()) {
+								Log.i(Constants.LEGAL_TRACKER_TAG,
+										"Could not delete "
+												+ file.getAbsolutePath());
 							}
 						}
 					} else {

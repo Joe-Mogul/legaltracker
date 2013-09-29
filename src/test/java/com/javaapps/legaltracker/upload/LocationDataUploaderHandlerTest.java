@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.GForceData;
 import com.javaapps.legaltracker.pojos.LegalTrackerLocation;
@@ -150,8 +151,8 @@ public class LocationDataUploaderHandlerTest {
 	public void uploadDataResultMapWithBadStatusThanGoodStatsTest()
 			throws ClientProtocolException, IOException {
 		List<FileResult> fileResultList = new ArrayList<FileResult>();
-		fileResultList.add(new FileResult("unittest1", 400,true));
-		fileResultList.add(new FileResult("unittest2", 200,true));
+		fileResultList.add(new FileResult("unittest", 400,true));
+		fileResultList.add(new FileResult("unittest", 200,true));
 		LocationDataUploaderHandler locationDataUploaderHandler = new LocationDataUploaderHandler(
 				testFileDir, "unittest");
 		for (FileResult fileResult : fileResultList) {
@@ -204,7 +205,7 @@ public class LocationDataUploaderHandlerTest {
 			this.fileName = fileName;
 			this.fileShouldBeDeleted=fileShouldBeDeleted;
 			this.result = result;
-			file = new File(testFileDir.getPath() + "/" + fileName + ".obj");
+			file = new File(testFileDir.getPath() + "/" + fileName + LegalTrackerFile.ARCHIVE_STRING+ ".obj");
 		}
 	
 	}
