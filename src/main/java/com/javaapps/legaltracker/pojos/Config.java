@@ -12,13 +12,13 @@ public class Config {
 
 	private int testStatusCode = 200;
 
-	private int gforceUploadPeriod = 1100000;
+	private int gforceUploadPeriod = 300000;
 
-	private int gforceUploadDelay = 1100000;
+	private int gforceUploadDelay = 300000;
 
-	private int locationUploadPeriod = 1300000;
+	private int locationUploadPeriod = 500000;
 
-	private int locationUploadDelay = 1300000;
+	private int locationUploadDelay = 500000;
 
 	private long minimumLoggingIntervals = 400;
 	

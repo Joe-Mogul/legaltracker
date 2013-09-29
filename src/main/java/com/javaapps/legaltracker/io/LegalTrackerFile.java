@@ -56,14 +56,11 @@ public class LegalTrackerFile<T> {
 		if (file.exists() && file.renameTo(new File(filesDir, getArchiveFileName()))) {
 			Log.i(Constants.LEGAL_TRACKER_TAG, prefix
 					+ " file successfully archived");
-		} else {
-			Log.e(Constants.LEGAL_TRACKER_TAG, prefix
-					+ " file could not be archived");
-		}
+		} 
 		ObjectOutputStream objectOutputStream = null;
 		try {
 			objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-					file, true));
+					file));
 			objectOutputStream.reset();
 			boolean errorThrown = false;
 			for (T object : objectList) {

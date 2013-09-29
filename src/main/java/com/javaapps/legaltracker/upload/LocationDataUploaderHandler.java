@@ -125,6 +125,8 @@ public class LocationDataUploaderHandler {
 				uploadBatch(fileResultMap, index, batchLocationDataList);
 			}
 		} catch (Exception ex) {
+			Monitor.getInstance().setLastGForceUploadStatusCode(
+					Constants.SERIALIZATION_ERROR);
 			Log.e(Constants.LEGAL_TRACKER_TAG,
 					"unable to open location data file because "
 							+ ex.getMessage());
