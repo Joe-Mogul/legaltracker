@@ -38,7 +38,7 @@ public class GForceDataUploaderReceiver extends BroadcastReceiver {
 				return;
 			}
 			Monitor.getInstance().setWifiStatus("Wifi OK");
-			GForceDataUploaderHandler gforceDataUploaderHandler=new GForceDataUploaderHandler(Config.getInstance().getFilesDir(),FileType.GForce.getPrefix()+"_archive_");
+			GForceDataUploaderHandler gforceDataUploaderHandler=new GForceDataUploaderHandler(Config.getInstance().getFilesDir(),FileType.GForce.getPrefix());
 			gforceDataUploaderHandler.uploadData();
 			Log.i(Constants.LEGAL_TRACKER_TAG, "uploaded gforce file");
 		} catch (Exception ex) {

@@ -127,7 +127,6 @@ public class LegalTrackerService extends Service implements Handler.Callback{
 		return null;
 	}
 
-	@Override
 	public boolean handleMessage(Message msg) {
 		Log.i(Constants.LEGAL_TRACKER_TAG,"received callback message "+msg.toString());
 		return false;

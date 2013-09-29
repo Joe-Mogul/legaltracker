@@ -39,7 +39,7 @@ public class LocationDataUploaderReceiver extends BroadcastReceiver {
 
 			}
 			Monitor.getInstance().setWifiStatus("Wifi OK");
-			LocationDataUploaderHandler locationDataUploaderHandler=new LocationDataUploaderHandler(Config.getInstance().getFilesDir(),FileType.Location.getPrefix()+"_archive_");
+			LocationDataUploaderHandler locationDataUploaderHandler=new LocationDataUploaderHandler(Config.getInstance().getFilesDir(),FileType.Location.getPrefix());
 			locationDataUploaderHandler.uploadData();
 			Log.i(Constants.LEGAL_TRACKER_TAG, "uploaded file");
 		} catch (Exception ex) {

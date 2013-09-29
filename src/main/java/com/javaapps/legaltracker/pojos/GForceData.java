@@ -5,6 +5,7 @@ import java.util.List;
 
 public class GForceData implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private long sampleDateInMillis;
 	private float x;
 	private float y;

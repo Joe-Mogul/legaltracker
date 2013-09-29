@@ -55,7 +55,9 @@ public class GForceDataUploaderHandler {
 	 */
 	public void uploadData() {
 		for (File file : this.filesDir.listFiles()) {
+			Log.i(Constants.LEGAL_TRACKER_TAG,"reading legal tracker directory");
 			if (file.getName().startsWith(filePrefix+LegalTrackerFile.ARCHIVE_STRING)) {
+				Log.i(Constants.LEGAL_TRACKER_TAG,"uploading file "+file.getName());
 				loadFile(file);
 			}
 		}
@@ -189,7 +191,6 @@ public class GForceDataUploaderHandler {
 			this.fileResultMap = fileResultMap;
 		}
 
-		@Override
 		public void run() {
 			HttpClient httpClient = httpClientFactory.getHttpClient();
 			if (httpClient != null) {

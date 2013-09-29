@@ -16,9 +16,9 @@ public class Config {
 
 	private int gforceUploadDelay = 1100000;
 
-	private int locationUploadPeriod = 1300000;
+	private int locationUploadPeriod = 130000;
 
-	private int locationUploadDelay = 1300000;
+	private int locationUploadDelay = 130000;
 
 	private long minimumLoggingIntervals = 400;
 	
@@ -26,7 +26,7 @@ public class Config {
 	
 	private int gforceListenerBufferSize=100;
 
-	private long httpTimeout = 1000;
+	private long httpTimeout = 4000;
 
 	private int uploadBatchSize = 1000;
 	
