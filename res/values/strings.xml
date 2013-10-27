@@ -9,7 +9,7 @@
     <string name="Location">Location</string>
     <string name="None">None</string>
     <string name="Processed">Location Processed Points</string>
-     <string name="GForceProcessed">GForce Processed Points</string>
+    <string name="GForceProcessed">GForce Processed Points</string>
     <string name="NotYet">Not Yet</string>
     <string name="ServerURL">Server URL</string>
     <string name="SaveConfiguration">Save Configuration</string>
@@ -28,11 +28,12 @@
     <string name="PointsInBuffer">Location Points in Buffer</string>
     <string name="GForcePointsInBuffer">GForce Points in Buffer</string>
     <string name="NotProcessed">Not Processed Location Points</string>
-   <string name="GForceNotProcessed">Not Processed GForce Points</string>
+    <string name="GForceNotProcessed">Not Processed GForce Points</string>
     <string name="LastConnectionError">Last Location Connection Error</string>
     <string name="LastGForceConnectionError">Last GForce Connection Error</string>
     <string name="GpsStatus">GPS Status</string>
     <string name="WifiStatus">Wifi Status</string>
     <string name="NotAvailable">Not Available</string>
     <string name="TestStatusCode">Test Status Code</string>
+     <string name="LegalTrackerService">Legal Tracker Service</string>
 </resources>

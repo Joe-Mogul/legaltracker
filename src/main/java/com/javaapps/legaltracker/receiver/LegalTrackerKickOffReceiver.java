@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
+import com.javaapps.legaltracker.activity.LegalTrackerActivity;
 import com.javaapps.legaltracker.listener.GForceListener;
 import com.javaapps.legaltracker.listener.LegalTrackerLocationListener;
 import com.javaapps.legaltracker.pojos.Config;
@@ -30,22 +31,30 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 
 	@Override
 	public synchronized void onReceive(Context context, Intent i) {
-		if ( ! isServiceRunning(context))
-		{
-		Log.i(Constants.LEGAL_TRACKER_TAG,
-				"LegalTrackerKickOffReceiver received intent " + i.getAction());
-		Intent serviceIntent = new Intent(context, LegalTrackerService.class);
-	     context.startService(serviceIntent);
+		if (!Monitor.getInstance().getServiceStarted()) {
+			Log.i(Constants.LEGAL_TRACKER_TAG,
+					"LegalTrackerKickOffReceiver received intent "
+							+ i.getAction());
+			Intent serviceIntent = new Intent(context,
+					LegalTrackerService.class);
+			context.startService(serviceIntent);
+			Monitor.getInstance().setServiceStarted(true);
+		/*	Intent legalTrackerActivityIntent = new Intent(context,
+					LegalTrackerActivity.class);
+			context.startActivity(legalTrackerActivityIntent);*/
 		}
 	}
-	
+
 	private boolean isServiceRunning(Context context) {
-	    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if (LegalTrackerService.class.getName().equals(service.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
+		ActivityManager manager = (ActivityManager) context
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		for (RunningServiceInfo service : manager
+				.getRunningServices(Integer.MAX_VALUE)) {
+			if (LegalTrackerService.class.getName().equals(
+					service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
