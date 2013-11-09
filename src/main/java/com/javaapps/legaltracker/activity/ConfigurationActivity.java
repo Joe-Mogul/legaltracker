@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.javaapps.legaltracker.R;
+import com.javaapps.legaltracker.db.LegalTrackerDBAdapter;
 import com.javaapps.legaltracker.io.FileType;
 import com.javaapps.legaltracker.io.LegalTrackerFile;
 import com.javaapps.legaltracker.pojos.Config;
@@ -23,22 +24,27 @@ public class ConfigurationActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.configuration);
+		try
+		{
+		LegalTrackerDBAdapter dbAdapter = new LegalTrackerDBAdapter(this);
+		dbAdapter.open();
+		Config.getInstance().setCustomIdentifier(dbAdapter.getValue(Constants.CUSTOM_IDENTIFIER));
+		dbAdapter.close();
+		EditText customIdenfierEntry = (EditText) this
+				.findViewById(R.id.customIdentifier);
+		customIdenfierEntry.setText(Config.getInstance().getCustomIdentifier());
+		}catch(Exception ex){
+			Log.e(Constants.LEGAL_TRACKER_TAG,"Cannot retrieve custom identifier because "+ex.getMessage());
+		}
 		Button saveConfigurationButton = (Button) this
 				.findViewById(R.id.saveConfigurationButton);
 		saveConfigurationButton.setOnClickListener(new ConfigurationListener());
-		Button cleanArchivesButton = (Button) this
-				.findViewById(R.id.cleanArchiveFiles);
-		cleanArchivesButton.setOnClickListener(new CleanArchivesListener());
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(com.javaapps.legaltracker.R.menu.main, menu);
-		EditText serverURLEntry = (EditText) this
-				.findViewById(R.id.serverURLEntry);
-		serverURLEntry.setText(Config.getInstance().getLocationDataEndpoint());
-
 		return true;
 	}
 
@@ -68,8 +74,9 @@ public class ConfigurationActivity extends Activity {
 						FileType.Location.getExtension());
 				legalTrackerFile.deleteFiles();
 			} catch (Exception e) {
-				Log.e(Constants.LEGAL_TRACKER_TAG, "Could not delete archive files because "
-						+ e.getMessage());
+				Log.e(Constants.LEGAL_TRACKER_TAG,
+						"Could not delete archive files because "
+								+ e.getMessage());
 			}
 		}
 	}
@@ -78,18 +85,23 @@ public class ConfigurationActivity extends Activity {
 
 		@Override
 		public void onClick(View arg0) {
-			try
-			{
-			EditText serverURLEntry = (EditText) ConfigurationActivity.this
-					.findViewById(R.id.serverURLEntry);
-			Config.getInstance().setLocationDataEndpoint(
-					serverURLEntry.getText().toString());
-			EditText testStatusCodeEntry = (EditText) ConfigurationActivity.this
-					.findViewById(R.id.TestStatusCode);
-			Config.getInstance().setTestStatusCode(
-					Integer.parseInt(testStatusCodeEntry.getText().toString()));
-			}catch(Exception ex){
-				//just to prevent a int parse exception
+			try {
+				EditText customIdenfierEntry = (EditText) ConfigurationActivity.this
+						.findViewById(R.id.customIdentifier);
+				String customIdentifierValue = customIdenfierEntry.getText()
+						.toString();
+				if (customIdentifierValue != null
+						&& customIdentifierValue.trim().length() > 0) {
+					LegalTrackerDBAdapter dbAdapter = new LegalTrackerDBAdapter(
+							ConfigurationActivity.this);
+					dbAdapter.open();
+					dbAdapter.insertValue(Constants.CUSTOM_IDENTIFIER,
+							customIdentifierValue);
+					Config.getInstance().setCustomIdentifier(dbAdapter.getValue(customIdentifierValue));
+					dbAdapter.close();
+				}
+			} catch (Exception ex) {
+				// just to prevent a int parse exception
 			}
 		}
 

@@ -3,6 +3,7 @@ package com.javaapps.legaltracker.service;
 import java.io.File;
 import java.io.IOException;
 
+import com.javaapps.legaltracker.db.LegalTrackerDBAdapter;
 import com.javaapps.legaltracker.listener.GForceListener;
 import com.javaapps.legaltracker.listener.LegalTrackerLocationListener;
 import com.javaapps.legaltracker.pojos.Config;
@@ -22,7 +23,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Environment;
-
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -64,6 +64,7 @@ public class LegalTrackerService extends Service implements Handler.Callback{
 				Secure.ANDROID_ID);
 		config.setFilesDir(filesSubDir);
 		config.setDeviceId(deviceId);
+		
 		locationListener = new LegalTrackerLocationListener();
 		scheduleLocationPolling();
 		scheduleFileUploads();

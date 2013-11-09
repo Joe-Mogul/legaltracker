@@ -9,6 +9,8 @@ public class Config {
 	private File filesDir;
 	
 	private String deviceId="12345";
+	
+	private String customIdentifier;
 
 	private int testStatusCode = 200;
 
@@ -148,6 +150,16 @@ public class Config {
 
 	public void setGforceListenerBufferSize(int gforceListenerBufferSize) {
 		this.gforceListenerBufferSize = gforceListenerBufferSize;
+	}
+	
+	
+
+	public String getCustomIdentifier() {
+		return customIdentifier;
+	}
+
+	public void setCustomIdentifier(String customIdentifier) {
+		this.customIdentifier = customIdentifier;
 	}
 
 	public synchronized static Config getInstance() {

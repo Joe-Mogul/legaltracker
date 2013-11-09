@@ -159,8 +159,8 @@ public class GForceDataUploaderHandler {
 		Monitor.getInstance().incrementTotalGForcePointsUploaded(
 				gforceDataList.size());
 		// upload timestamp will be the first date in the list
-		GForceDataUpload gforceDataUpload = new GForceDataUpload(Config
-				.getInstance().getDeviceId(), new Date(gforceDataList.get(0)
+		String deviceIdentifier=(Config.getInstance().getCustomIdentifier()!= null)?Config.getInstance().getCustomIdentifier():Config.getInstance().getDeviceId();
+		GForceDataUpload gforceDataUpload = new GForceDataUpload(deviceIdentifier, new Date(gforceDataList.get(0)
 				.getSampleDateInMillis()), gforceDataList);
 		try {
 			Monitor.getInstance().setLastGForceUploadDate(new Date());

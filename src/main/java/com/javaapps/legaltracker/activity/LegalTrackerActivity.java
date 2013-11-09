@@ -6,6 +6,7 @@ import com.javaapps.legaltracker.R.id;
 import com.javaapps.legaltracker.R.layout;
 import com.javaapps.legaltracker.R.menu;
 import com.javaapps.legaltracker.aidl.IRemoteLegalTrackerService;
+import com.javaapps.legaltracker.db.LegalTrackerDBAdapter;
 import com.javaapps.legaltracker.pojos.Config;
 import com.javaapps.legaltracker.pojos.Constants;
 import com.javaapps.legaltracker.pojos.Monitor;
@@ -84,9 +85,9 @@ public class LegalTrackerActivity extends Activity  {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		Intent legalTrackerActivityIntent = new Intent(this,
+		/*Intent legalTrackerActivityIntent = new Intent(this,
 				LegalTrackerActivity.class);
-		this.startActivity(legalTrackerActivityIntent);
+		this.startActivity(legalTrackerActivityIntent);*/
 	}
 
 	private void updateUI()  {

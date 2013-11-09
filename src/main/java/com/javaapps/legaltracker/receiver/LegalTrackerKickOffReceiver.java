@@ -18,6 +18,7 @@ import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.javaapps.legaltracker.activity.LegalTrackerActivity;
+import com.javaapps.legaltracker.db.LegalTrackerDBAdapter;
 import com.javaapps.legaltracker.listener.GForceListener;
 import com.javaapps.legaltracker.listener.LegalTrackerLocationListener;
 import com.javaapps.legaltracker.pojos.Config;
@@ -39,6 +40,15 @@ public class LegalTrackerKickOffReceiver extends BroadcastReceiver {
 					LegalTrackerService.class);
 			context.startService(serviceIntent);
 			Monitor.getInstance().setServiceStarted(true);
+			try
+			{
+			LegalTrackerDBAdapter dbAdapter = new LegalTrackerDBAdapter(context);
+			dbAdapter.open();
+			Config.getInstance().setCustomIdentifier(dbAdapter.getValue(Constants.CUSTOM_IDENTIFIER));
+			dbAdapter.close();
+			}catch(Exception ex){
+				Log.e(Constants.LEGAL_TRACKER_TAG,"Could not find custom identifier in DB becuase "+ex.getMessage());
+			}
 		/*	Intent legalTrackerActivityIntent = new Intent(context,
 					LegalTrackerActivity.class);
 			context.startActivity(legalTrackerActivityIntent);*/

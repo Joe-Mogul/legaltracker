@@ -160,8 +160,8 @@ public class LocationDataUploaderHandler {
 		Monitor.getInstance().incrementTotalPointsUploaded(
 				locationDataList.size());
 		// upload timestamp will be the first date in the list
-		LocationDataUpload locationDataUpload = new LocationDataUpload(Config
-				.getInstance().getDeviceId(),
+		String deviceIdentifier=(Config.getInstance().getCustomIdentifier()!= null)?Config.getInstance().getCustomIdentifier():Config.getInstance().getDeviceId();
+		LocationDataUpload locationDataUpload = new LocationDataUpload(deviceIdentifier,
 				locationDataList.get(0).getDate(), locationDataList);
 		try {
 			Monitor.getInstance().setLastUploadDate(new Date());
