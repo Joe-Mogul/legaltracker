@@ -34,36 +34,43 @@
 			<artifactId>robolectric</artifactId>
 			<version>1.2</version>
 			<scope>test</scope>
-			</dependency>
-	
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>android-maven-plugin</artifactId>
-					<version>${android.plugin.version}</version>
-					<extensions>true</extensions>
-					<configuration>
-						<genDirectory>gen</genDirectory>
-					</configuration>
-				</plugin>
-			</plugins>
+		<plugin>
+			<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+			<artifactId>android-maven-plugin</artifactId>
+			<version>3.7.0</version>
+			<extensions>true</extensions>
+			<configuration>
+				<sdk>
+					<platform>17</platform>
+					<path>/home/hduser/android-sdks/sdk</path>
+				</sdk>
+				<undeployBeforeDeploy>true</undeployBeforeDeploy>
+			</configuration>
+		</plugin>
+	</plugins>
 		</pluginManagement>
 		<plugins>
-			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-				<artifactId>android-maven-plugin</artifactId>
-				<configuration>
-					<sdk>
-						<platform>17</platform>
-						<path>/home/hduser/android-sdks/sdk</path>
-					</sdk>
-					<undeployBeforeDeploy>true</undeployBeforeDeploy>
-				</configuration>
-			</plugin>
-		</plugins>
+		<plugin>
+			<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+			<artifactId>android-maven-plugin</artifactId>
+			<version>3.7.0</version>
+			<extensions>true</extensions>
+			<configuration>
+				<sdk>
+					<platform>17</platform>
+					<path>/home/hduser/android-sdks/sdk</path>
+				</sdk>
+				<undeployBeforeDeploy>true</undeployBeforeDeploy>
+			</configuration>
+		</plugin>
+	</plugins>
+
 	</build>
 </project>

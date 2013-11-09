@@ -24,9 +24,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.javaapps.legaltracker.activity.LegalTrackerActivity"  android:launchMode="singleTask" >
+        <activity
+            android:name="com.javaapps.legaltracker.activity.LegalTrackerActivity"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -41,23 +44,19 @@
 
         <receiver android:name=".receiver.LegalTrackerKickOffReceiver" >
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-            <intent-filter>
+              <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_BATTERY_OKAY" />
-            </intent-filter>
-             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SCREEN_OFF" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="kickOffLogger" />
+                <action android:name="kickOffLogger" /> 
+                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
         <service
             android:name="com.javaapps.legaltracker.service.LegalTrackerService"
             android:label="@string/LegalTrackerService" >
-        </service>-
+        </service>
+-
     </application>
 
 </manifest>

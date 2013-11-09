@@ -10,27 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_weight="0.00"
-        android:text="@string/ServerURL"
+        android:text="@string/customIdentifier"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <EditText
-        android:id="@+id/serverURLEntry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
-    <TextView
-        android:id="@+id/TestStatusCodeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_weight="0.00"
-        android:text="@string/TestStatusCode"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <EditText
-        android:id="@+id/TestStatusCode"
+        android:id="@+id/customIdentifier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10" >
@@ -44,12 +28,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/SaveConfiguration" />
-
-    <Button
-        android:id="@+id/cleanArchiveFiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.00"
-        android:text="@string/CleanArchiveFiles" />
 
 </LinearLayout>

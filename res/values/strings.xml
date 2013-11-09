@@ -36,4 +36,5 @@
     <string name="NotAvailable">Not Available</string>
     <string name="TestStatusCode">Test Status Code</string>
      <string name="LegalTrackerService">Legal Tracker Service</string>
+     <string name="customIdentifier">Custom Identifier (license plate)</string>
 </resources>
